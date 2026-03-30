@@ -1,0 +1,5 @@
+{"type":"server-started","port":50386,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:50386","screen_dir":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/65077-1774350891"}
+{"type":"screen-added","file":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/65077-1774350891/flow-a.html"}
+{"type":"screen-added","file":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/65077-1774350891/flow-a-v2.html"}
+{"type":"screen-added","file":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/65077-1774350891/waiting.html"}
+{"type":"server-stopped","reason":"idle timeout"}

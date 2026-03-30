@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visit Clinic — Kiosk Check-in Flows (A–E)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f0f13;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #e0e0e0;
+    padding: 28px 24px 60px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .page-header h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .page-header .sub {
+    font-size: 13px;
+    color: #888;
+  }
+  .brand-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 8px;
+    padding: 6px 14px;
+    margin-bottom: 14px;
+  }
+  .brand-dot { width: 10px; height: 10px; background: #714FFF; border-radius: 3px; }
+  .brand-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; color: #714FFF; }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #333;
+    color: #888;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab:hover { border-color: #714FFF; color: #bbb; }
+  .tab.active { background: #714FFF; border-color: #714FFF; color: #fff; }
+
+  /* ── Panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Overview panel ── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── Entry node ── */
+  .entry-node {
+    background: linear-gradient(135deg, #714FFF22, #714FFF08);
+    border: 1.5px solid #714FFF55;
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    max-width: 480px;
+    margin: 0 auto 8px;
+  }
+  .entry-node h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 16px;
+    color: #c4b5fd;
+    margin-bottom: 6px;
+  }
+  .entry-node p { font-size: 12px; color: #999; line-height: 1.5; }
+
+  /* ── Branch connector ── */
+  .branch-connector {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 0 auto 8px;
+    position: relative;
+  }
+  .branch-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 16px;
+    background: #714FFF55;
+  }
+  .branch-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 14px;
+    border-radius: 12px;
+    position: relative;
+  }
+  .branch-label.pre { background: #22c55e18; color: #4ade80; border: 1px solid #22c55e33; }
+  .branch-label.walk { background: #f59e0b18; color: #fbbf24; border: 1px solid #f59e0b33; }
+
+  /* ── Flow cards ── */
+  .flow-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    max-width: 1100px;
+    margin: 0 auto 12px;
+  }
+  .flow-card {
+    background: #1a1a22;
+    border: 1.5px solid #2a2a35;
+    border-radius: 12px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .flow-card:hover { border-color: #714FFF88; transform: translateY(-2px); }
+  .flow-card .flow-id {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .flow-card.green .flow-id { background: #22c55e22; color: #4ade80; }
+  .flow-card.amber .flow-id { background: #f59e0b22; color: #fbbf24; }
+  .flow-card.blue .flow-id { background: #3b82f622; color: #60a5fa; }
+  .flow-card.rose .flow-id { background: #f4364c22; color: #fb7185; }
+  .flow-card.purple .flow-id { background: #a855f722; color: #c084fc; }
+  .flow-card h4 {
+    font-size: 14px;
+    color: #eee;
+    margin-bottom: 4px;
+  }
+  .flow-card .desc {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+  .flow-card .stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #ffffff08;
+    color: #aaa;
+  }
+  .stat strong { color: #ddd; }
+
+  /* ── Cross-reference arrows ── */
+  .xref-section {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .xref-section h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 14px;
+    color: #c4b5fd;
+    margin-bottom: 10px;
+  }
+  .xref-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .xref-from, .xref-to {
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .xref-from { background: #714FFF22; color: #a78bfa; }
+  .xref-to { background: #22c55e18; color: #4ade80; }
+  .xref-arrow { color: #555; }
+  .xref-reason { color: #888; }
+
+  /* ── Detail panel ── */
+  .detail-panel {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .detail-header h2 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 22px;
+    color: #fff;
+  }
+  .detail-header .persona-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .detail-header .persona-badge.ph { background: #22c55e18; color: #4ade80; border: 1px solid #22c55e33; }
+  .detail-header .persona-badge.bn { background: #3b82f622; color: #60a5fa; border: 1px solid #3b82f633; }
+  .detail-header .persona-badge.np { background: #f4364c22; color: #fb7185; border: 1px solid #f4364c33; }
+  .detail-desc { font-size: 12px; color: #999; line-height: 1.55; margin-bottom: 24px; max-width: 700px; }
+
+  /* ── Screen flow timeline ── */
+  .flow-timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .flow-timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: #2a2a35;
+  }
+
+  .screen-node {
+    position: relative;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .screen-node:hover { border-color: #714FFF66; }
+  .screen-node::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 16px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #714FFF;
+    border: 2px solid #0f0f13;
+  }
+  .screen-node.branch::before { background: #fbbf24; }
+  .screen-node.error-node::before { background: #fb7185; }
+  .screen-node.confirm::before { background: #4ade80; }
+  .screen-node .sn-id {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: #a78bfa;
+    margin-right: 6px;
+  }
+  .screen-node .sn-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #ddd;
+  }
+  .screen-node .sn-detail {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .screen-node .sn-api {
+    font-size: 10px;
+    color: #714FFF;
+    background: #714FFF11;
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    margin-top: 4px;
+    font-family: monospace;
+  }
+
+  /* ── Branch indicator ── */
+  .branch-group {
+    margin-left: 20px;
+    border-left: 2px dashed #fbbf2444;
+    padding-left: 16px;
+    margin-bottom: 12px;
+  }
+  .branch-group-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #fbbf24;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    padding-left: 6px;
+  }
+
+  /* ── Shared screens note ── */
+  .shared-note {
+    background: #714FFF0a;
+    border: 1px dashed #714FFF33;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+  .shared-note strong { color: #c4b5fd; }
+
+  /* ── Service sub-flows ── */
+  .service-tabs {
+    display: flex;
+    gap: 4px;
+    margin: 12px 0 8px 28px;
+  }
+  .service-tab {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    color: #777;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .service-tab:hover { border-color: #714FFF; color: #bbb; }
+  .service-tab.active { background: #714FFF22; border-color: #714FFF; color: #c4b5fd; }
+  .service-panel { display: none; }
+  .service-panel.active { display: block; }
+
+  /* ── Loop-back indicator ── */
+  .loop-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #4ade80;
+    margin-top: 6px;
+  }
+  .loop-back .arrow { font-size: 14px; }
+
+  /* ── Error section ── */
+  .error-section {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: #fb718511;
+    border: 1px solid #fb718522;
+    border-radius: 10px;
+  }
+  .error-section h4 {
+    font-size: 13px;
+    color: #fb7185;
+    margin-bottom: 8px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+  .error-item {
+    font-size: 11px;
+    color: #999;
+    line-height: 1.5;
+    margin-bottom: 4px;
+    padding-left: 12px;
+    position: relative;
+  }
+  .error-item::before {
+    content: '!';
+    position: absolute;
+    left: 0;
+    color: #fb7185;
+    font-weight: 700;
+    font-size: 10px;
+  }
+
+  /* ── Comparison table ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .compare-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background: #1a1a22;
+    color: #c4b5fd;
+    font-size: 11px;
+    font-weight: 600;
+    border-bottom: 1px solid #2a2a35;
+  }
+  .compare-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #1a1a22;
+    color: #bbb;
+    vertical-align: top;
+  }
+  .compare-table tr:hover td { background: #1a1a2288; }
+  .check { color: #4ade80; }
+  .cross { color: #fb7185; }
+
+  /* ── API Legend ── */
+  .api-legend {
+    max-width: 1100px;
+    margin: 24px auto 0;
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .api-legend h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 14px;
+    color: #c4b5fd;
+    margin-bottom: 10px;
+  }
+  .api-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+  }
+  .api-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .api-item code {
+    font-family: monospace;
+    color: #714FFF;
+    background: #714FFF11;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .api-item .api-owner {
+    font-size: 10px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="brand-bar"><div class="brand-dot"></div><span class="brand-name">Visit</span></div>
+  <h1>Kiosk Check-in Flows — Complete Map</h1>
+  <p class="sub">5 flows · all personas · every screen · all edge cases</p>
+</div>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab active" onclick="showPanel('overview')">Overview</button>
+  <button class="tab" onclick="showPanel('flow-a')">A · PreBooked PH</button>
+  <button class="tab" onclick="showPanel('flow-b')">B · PreBooked Benef.</button>
+  <button class="tab" onclick="showPanel('flow-c')">C · WalkIn PH</button>
+  <button class="tab" onclick="showPanel('flow-d')">D · WalkIn Benef.</button>
+  <button class="tab" onclick="showPanel('flow-e')">E · WalkIn NonPolicy</button>
+  <button class="tab" onclick="showPanel('compare')">Compare</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     OVERVIEW PANEL
+═══════════════════════════════════════════ -->
+<div class="panel active" id="panel-overview">
+  <div class="overview-grid">
+
+    <!-- S1 Entry -->
+    <div class="entry-node">
+      <h3>S1 — Welcome Screen (shared)</h3>
+      <p>"Do you have a pre-booked appointment?" or "Are you walking in?"<br>All 5 flows start here. This is the single kiosk entry point.</p>
+    </div>
+
+    <!-- Branch labels -->
+    <div class="branch-connector">
+      <span class="branch-label pre">Pre-Booked</span>
+      <span class="branch-label walk">Walk-in</span>
+    </div>
+
+    <!-- Pre-booked flows -->
+    <div class="flow-row">
+      <div class="flow-card green" onclick="showPanel('flow-a')">
+        <span class="flow-id">A</span>
+        <h4>PolicyHolder PreBooked</h4>
+        <p class="desc">Policy holder with a pre-booked doctor consult, lab, or AHC. Identifies via mobile+OTP or QR scan. Sees today's orders and checks in.</p>
+        <div class="stats">
+          <span class="stat"><strong>4</strong> screens</span>
+          <span class="stat">S2a/S2b branch</span>
+          <span class="stat">Direct check-in</span>
+        </div>
+      </div>
+      <div class="flow-card blue" onclick="showPanel('flow-b')">
+        <span class="flow-id">B</span>
+        <h4>Beneficiary PreBooked</h4>
+        <p class="desc">Beneficiary whose policy holder booked for them. Arrives with WhatsApp QR. Same 4-screen flow as A but addressed by beneficiary name.</p>
+        <div class="stats">
+          <span class="stat"><strong>4</strong> screens</span>
+          <span class="stat">S2a/S2b branch</span>
+          <span class="stat">Direct check-in</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Walk-in flows -->
+    <div class="flow-row">
+      <div class="flow-card amber" onclick="showPanel('flow-c')">
+        <span class="flow-id">C</span>
+        <h4>PolicyHolder Walk-in</h4>
+        <p class="desc">Policy holder walking in without a booking. Selects beneficiary, picks a service (doctor / lab / AHC), books, pays, and checks in.</p>
+        <div class="stats">
+          <span class="stat"><strong>18</strong> screens</span>
+          <span class="stat">3 service branches</span>
+          <span class="stat">Benefit coverage</span>
+          <span class="stat">Loop → S3</span>
+        </div>
+      </div>
+      <div class="flow-card rose" onclick="showPanel('flow-d')">
+        <span class="flow-id">D</span>
+        <h4>Beneficiary Walk-in</h4>
+        <p class="desc">Beneficiary walking in alone. Two ID paths: own mobile or policy holder's mobile. Books for self only. Same 3 service branches as C.</p>
+        <div class="stats">
+          <span class="stat"><strong>20</strong> screens</span>
+          <span class="stat">Dual ID path</span>
+          <span class="stat">Benefit coverage</span>
+          <span class="stat">Loop → S4</span>
+        </div>
+      </div>
+      <div class="flow-card purple" onclick="showPanel('flow-e')">
+        <span class="flow-id">E</span>
+        <h4>Non-Policy Walk-in</h4>
+        <p class="desc">Retail or new user, no policy. If unregistered, creates Visit + TP accounts. Only doctor and lab available. Full OOP payment.</p>
+        <div class="stats">
+          <span class="stat"><strong>13</strong> screens</span>
+          <span class="stat">Registration flow</span>
+          <span class="stat">No AHC</span>
+          <span class="stat">No benefits</span>
+          <span class="stat">Loop → S3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross-references -->
+    <div class="xref-section">
+      <h3>Cross-Flow Redirects</h3>
+      <div class="xref-row">
+        <span class="xref-from">C</span>
+        <span class="xref-arrow">→</span>
+        <span class="xref-to">E</span>
+        <span class="xref-reason">Mobile not found in Visit (new patient) → direct to concierge / Flow E</span>
+      </div>
+      <div class="xref-row">
+        <span class="xref-from">D</span>
+        <span class="xref-arrow">→</span>
+        <span class="xref-to">C</span>
+        <span class="xref-reason">S2a returns a policy holder profile → redirect to Flow C</span>
+      </div>
+      <div class="xref-row">
+        <span class="xref-from">D</span>
+        <span class="xref-arrow">→</span>
+        <span class="xref-to">E</span>
+        <span class="xref-reason">Mobile not found in Visit → suggest concierge / Flow E registration</span>
+      </div>
+    </div>
+
+    <!-- API Legend -->
+    <div class="api-legend">
+      <h3>API Surface (all flows)</h3>
+      <div class="api-grid">
+        <div class="api-item"><code>GetPatientProfile</code> <span class="api-owner">Visit · identify patient</span></div>
+        <div class="api-item"><code>GetBeneficiaries</code> <span class="api-owner">Visit · list beneficiaries under policy</span></div>
+        <div class="api-item"><code>GetBeneficiaryDetails</code> <span class="api-owner">Visit · single beneficiary lookup</span></div>
+        <div class="api-item"><code>FetchServices</code> <span class="api-owner">Visit · available services per beneficiary</span></div>
+        <div class="api-item"><code>FetchDoctorListing</code> <span class="api-owner">Visit/TP · doctor availability</span></div>
+        <div class="api-item"><code>FetchDoctorSlots</code> <span class="api-owner">Visit · time slots per doctor</span></div>
+        <div class="api-item"><code>FetchLabCatalog</code> <span class="api-owner">Visit · test catalog + pricing</span></div>
+        <div class="api-item"><code>FetchAHCPackages</code> <span class="api-owner">Visit · AHC packages per beneficiary</span></div>
+        <div class="api-item"><code>FetchBenefitEligibility</code> <span class="api-owner">Visit · wallet/policy coverage</span></div>
+        <div class="api-item"><code>CreatePatientAccount</code> <span class="api-owner">Visit · Flow E registration</span></div>
+        <div class="api-item"><code>CreatePatientRecord</code> <span class="api-owner">TP (Siddharth) · UHID generation</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FLOW A PANEL
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-flow-a">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2>Flow A — PolicyHolder PreBooked</h2>
+      <span class="persona-badge ph">Policy Holder</span>
+      <span class="persona-badge ph">Pre-Booked</span>
+    </div>
+    <p class="detail-desc">Policy holder who pre-booked a doctor consult, lab visit, or AHC. Arrives at the kiosk (or uses geo-fenced app check-in). The simplest flow — identify, view orders, check in.</p>
+
+    <div class="flow-timeline">
+      <div class="screen-node">
+        <span class="sn-id">S1</span><span class="sn-name">Welcome Screen</span>
+        <div class="sn-detail">Taps "Pre-booked appointment"</div>
+      </div>
+      <div class="screen-node branch">
+        <span class="sn-id">S2</span><span class="sn-name">User Identification</span>
+        <div class="sn-detail">Two options: enter mobile number OR scan QR code</div>
+      </div>
+      <div class="branch-group">
+        <div class="branch-group-label">Branch: Mobile</div>
+        <div class="screen-node">
+          <span class="sn-id">S2a</span><span class="sn-name">Mobile + OTP</span>
+          <div class="sn-detail">Enter number → OTP verification → fetch patient + today's orders</div>
+          <span class="sn-api">OTP Service → GetPatientProfile → FetchOrders</span>
+        </div>
+      </div>
+      <div class="branch-group">
+        <div class="branch-group-label">Branch: QR Scan</div>
+        <div class="screen-node">
+          <span class="sn-id">S2b</span><span class="sn-name">QR Scan</span>
+          <div class="sn-detail">Scan appointment QR from Visit app → fetch patient + orders</div>
+          <span class="sn-api">QR Scanner → GetPatientProfile → FetchOrders</span>
+        </div>
+      </div>
+      <div class="screen-node">
+        <span class="sn-id">S3</span><span class="sn-name">List of Appointments / Orders</span>
+        <div class="sn-detail">"Welcome {name}" — shows today's appointments (doctor/lab icons). Single "Check-in" CTA for overall clinic check-in.</div>
+      </div>
+      <div class="screen-node confirm">
+        <span class="sn-id">S4</span><span class="sn-name">Check-in Confirmation + Token</span>
+        <div class="sn-detail">Token number displayed. WhatsApp sent with token + queue link. Directions to service area (e.g., "Head to Cabin A for Dr. consultation").</div>
+        <span class="sn-api">QueueService → generateToken</span>
+      </div>
+    </div>
+
+    <div class="error-section">
+      <h4>Edge Cases</h4>
+      <div class="error-item">Patient not found / wrong QR → error message, suggest concierge</div>
+      <div class="error-item">OTP wrong 3x → lock out, direct to concierge</div>
+      <div class="error-item">Policy holder booked for multiple beneficiaries → S3 lists by beneficiary name, S4 offers loop to check in others</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FLOW B PANEL
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-flow-b">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2>Flow B — Beneficiary PreBooked</h2>
+      <span class="persona-badge bn">Beneficiary</span>
+      <span class="persona-badge ph">Pre-Booked</span>
+    </div>
+    <p class="detail-desc">Beneficiary whose policy holder booked an appointment for them via the Visit app. Arrives with a WhatsApp QR confirmation. Identical structure to Flow A but addressed by beneficiary name.</p>
+
+    <div class="flow-timeline">
+      <div class="screen-node">
+        <span class="sn-id">S1</span><span class="sn-name">Welcome Screen</span>
+        <div class="sn-detail">Taps "Pre-booked appointment"</div>
+      </div>
+      <div class="screen-node branch">
+        <span class="sn-id">S2</span><span class="sn-name">User Identification</span>
+        <div class="sn-detail">Enter mobile number OR scan QR from WhatsApp</div>
+      </div>
+      <div class="branch-group">
+        <div class="branch-group-label">Branch: Mobile</div>
+        <div class="screen-node">
+          <span class="sn-id">S2a</span><span class="sn-name">Mobile + OTP</span>
+          <div class="sn-detail">Enter number → OTP → fetch patient + today's orders</div>
+        </div>
+      </div>
+      <div class="branch-group">
+        <div class="branch-group-label">Branch: QR Scan</div>
+        <div class="screen-node">
+          <span class="sn-id">S2b</span><span class="sn-name">QR Scan</span>
+          <div class="sn-detail">Scan appointment QR → fetch patient + orders</div>
+        </div>
+      </div>
+      <div class="screen-node">
+        <span class="sn-id">S3</span><span class="sn-name">List of Appointments / Orders</span>
+        <div class="sn-detail">"Welcome {beneficiary_name}" — today's appointments. Single "Check-in" CTA.</div>
+      </div>
+      <div class="screen-node confirm">
+        <span class="sn-id">S4</span><span class="sn-name">Check-in Confirmation + Token</span>
+        <div class="sn-detail">Token number, WhatsApp confirmation, directions to service area.</div>
+      </div>
+    </div>
+
+    <div class="error-section">
+      <h4>Edge Cases</h4>
+      <div class="error-item">Patient not found / wrong QR → error, suggest concierge</div>
+      <div class="error-item">OTP wrong 3x → lock out, concierge</div>
+      <div class="error-item">Multiple beneficiaries pre-booked → S3 lists by name, S4 loop for others</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FLOW C PANEL
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-flow-c">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2>Flow C — PolicyHolder Walk-in</h2>
+      <span class="persona-badge ph">Policy Holder</span>
+      <span class="persona-badge bn">Walk-in</span>
+    </div>
+    <p class="detail-desc">Policy holder walking in without a booking. Identifies via mobile+OTP, selects a beneficiary, picks a service (doctor, lab, or AHC), completes payment, and checks in. Can loop via "Book Another Service" back to beneficiary selection.</p>
+
+    <div class="flow-timeline">
+      <div class="screen-node"><span class="sn-id">S1</span><span class="sn-name">Welcome</span><div class="sn-detail">Taps "Walking in"</div></div>
+      <div class="screen-node"><span class="sn-id">S2</span><span class="sn-name">Mobile + OTP</span><div class="sn-detail">Enter mobile → OTP → fetch patient + beneficiaries</div><span class="sn-api">OTP → GetBeneficiaries</span></div>
+      <div class="screen-node"><span class="sn-id">S3</span><span class="sn-name">Select Beneficiary</span><div class="sn-detail">List of all beneficiaries (including self). Tap one to book for.</div></div>
+      <div class="screen-node branch"><span class="sn-id">S4</span><span class="sn-name">Select Service</span><div class="sn-detail">Doctor Appointment · Lab Tests · Available AHCs</div><span class="sn-api">FetchServices</span></div>
+    </div>
+
+    <div class="service-tabs">
+      <button class="service-tab active" onclick="showService('c','doctor')">Doctor (S5)</button>
+      <button class="service-tab" onclick="showService('c','lab')">Lab Tests (S6)</button>
+      <button class="service-tab" onclick="showService('c','ahc')">AHC (S7)</button>
+    </div>
+
+    <div class="service-panel active" id="c-doctor">
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S5a</span><span class="sn-name">Doctor Listing</span><div class="sn-detail">Available doctors with profiles</div><span class="sn-api">FetchDoctorListing</span></div>
+        <div class="screen-node"><span class="sn-id">S5b</span><span class="sn-name">Slot Selection</span><div class="sn-detail">Available time slots for selected doctor</div><span class="sn-api">FetchDoctorSlots</span></div>
+        <div class="screen-node"><span class="sn-id">S5c</span><span class="sn-name">Payment Confirmation</span><div class="sn-detail">Fee with benefit/wallet deduction breakdown</div><span class="sn-api">FetchBenefitEligibility</span></div>
+        <div class="screen-node"><span class="sn-id">S5d</span><span class="sn-name">QR Payment</span><div class="sn-detail">Scan QR to pay (or auto-proceed if fully covered)</div></div>
+        <div class="screen-node confirm"><span class="sn-id">S5e</span><span class="sn-name">Confirmation + Token</span><div class="sn-detail">Token, wait time, WhatsApp confirmation</div><div class="loop-back"><span class="arrow">↩</span> "Book Another Service" → back to S3</div></div>
+      </div>
+    </div>
+
+    <div class="service-panel" id="c-lab">
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S6a</span><span class="sn-name">Lab Test Catalog</span><div class="sn-detail">Browse by category, "Add" to cart, floating cart icon</div><span class="sn-api">FetchLabCatalog</span></div>
+        <div class="screen-node"><span class="sn-id">S6b</span><span class="sn-name">Cart Review + Prep Instructions</span><div class="sn-detail">All selected tests, prices, fasting/prep notes. Remove items.</div></div>
+        <div class="screen-node"><span class="sn-id">S6c</span><span class="sn-name">Payment + Benefits</span><div class="sn-detail">Benefit breakdown: original, covered, payable</div><span class="sn-api">FetchBenefitEligibility</span></div>
+        <div class="screen-node"><span class="sn-id">S6d</span><span class="sn-name">QR Payment</span><div class="sn-detail">Scan QR (or auto-proceed if zero payable)</div></div>
+        <div class="screen-node confirm"><span class="sn-id">S6e</span><span class="sn-name">Lab Confirmation + Token</span><div class="sn-detail">Test list, lab queue token, directions to Sample Collection</div><div class="loop-back"><span class="arrow">↩</span> "Book Another Service" → back to S3</div></div>
+      </div>
+    </div>
+
+    <div class="service-panel" id="c-ahc">
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S7a</span><span class="sn-name">AHC Package Listing</span><div class="sn-detail">Available packages with inclusions, price</div><span class="sn-api">FetchAHCPackages</span></div>
+        <div class="screen-node"><span class="sn-id">S7b</span><span class="sn-name">Package Details + Add-ons</span><div class="sn-detail">Full test breakdown, prep instructions. "Add more tests" from lab catalog.</div><span class="sn-api">FetchLabCatalog</span></div>
+        <div class="screen-node"><span class="sn-id">S7c</span><span class="sn-name">Cart Review (Package + Add-ons)</span><div class="sn-detail">Consolidated cart. Can remove add-ons (not package items).</div></div>
+        <div class="screen-node"><span class="sn-id">S7d</span><span class="sn-name">Payment + Benefits</span><div class="sn-detail">Package + add-on benefit breakdown</div><span class="sn-api">FetchBenefitEligibility</span></div>
+        <div class="screen-node"><span class="sn-id">S7e</span><span class="sn-name">QR Payment</span><div class="sn-detail">Scan QR (or auto-proceed if zero payable)</div></div>
+        <div class="screen-node confirm"><span class="sn-id">S7f</span><span class="sn-name">AHC Confirmation + Visit Guide</span><div class="sn-detail">Step-by-step visit flow: Sample Collection → Radiology → Doctor cabin</div><div class="loop-back"><span class="arrow">↩</span> "Book Another Service" → back to S3</div></div>
+      </div>
+    </div>
+
+    <div class="error-section">
+      <h4>Edge Cases (16 total across 5 categories)</h4>
+      <div class="error-item">New patient → direct to concierge / Flow E</div>
+      <div class="error-item">Zero services for beneficiary → empty state + concierge</div>
+      <div class="error-item">Benefit exhausted mid-session → re-call FetchBenefitEligibility at payment</div>
+      <div class="error-item">Duplicate test order from EMR → warn at cart review</div>
+      <div class="error-item">AHC already done this year → flag on S7a</div>
+      <div class="error-item">Doctor slot race condition → return to S5b</div>
+      <div class="error-item">QR expiry → "Regenerate QR" option</div>
+      <div class="error-item">Session timeout 60s → countdown → reset to S1</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FLOW D PANEL
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-flow-d">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2>Flow D — Beneficiary Walk-in</h2>
+      <span class="persona-badge bn">Beneficiary</span>
+      <span class="persona-badge bn">Walk-in</span>
+    </div>
+    <p class="detail-desc">Beneficiary walking in alone without a booking. Two ID paths: own mobile (auto-confirms identity) or policy holder's mobile (picks from list). Books for self only. "Book Another Service" loops to S4 (not S3).</p>
+
+    <div class="flow-timeline">
+      <div class="screen-node"><span class="sn-id">S1</span><span class="sn-name">Welcome</span><div class="sn-detail">Taps "Walking in"</div></div>
+      <div class="screen-node branch"><span class="sn-id">S2</span><span class="sn-name">Identification — Two Options</span><div class="sn-detail">(a) Enter own mobile · (b) Enter policy holder's mobile</div></div>
+    </div>
+    <div class="branch-group">
+      <div class="branch-group-label">Path A: Own Mobile</div>
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S2a</span><span class="sn-name">Own Mobile + OTP</span><div class="sn-detail">OTP to own phone → check if beneficiary</div><span class="sn-api">GetBeneficiaryDetails</span></div>
+        <div class="screen-node"><span class="sn-id">S3a</span><span class="sn-name">Beneficiary Confirmed</span><div class="sn-detail">"You are a beneficiary under [PH Name]'s policy." Confirm → S4</div></div>
+      </div>
+    </div>
+    <div class="branch-group">
+      <div class="branch-group-label">Path B: Policy Holder's Mobile</div>
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S2b</span><span class="sn-name">PH Mobile + OTP</span><div class="sn-detail">OTP sent to PH's phone. Beneficiary must coordinate.</div><span class="sn-api">GetBeneficiaries</span></div>
+        <div class="screen-node"><span class="sn-id">S3b</span><span class="sn-name">Self-select from List</span><div class="sn-detail">Tap own name from beneficiary list → S4</div></div>
+      </div>
+    </div>
+    <div class="flow-timeline">
+      <div class="screen-node branch"><span class="sn-id">S4</span><span class="sn-name">Select Service</span><div class="sn-detail">Doctor · Lab Tests · Available AHCs</div><span class="sn-api">FetchServices</span></div>
+    </div>
+    <div class="shared-note"><strong>S5–S7 (Doctor / Lab / AHC)</strong> — identical to Flow C. "Book Another Service" loops to <strong>S4</strong> (not S3) since only one beneficiary is in scope.</div>
+
+    <div class="error-section">
+      <h4>Unique Edge Cases</h4>
+      <div class="error-item">S2a: number belongs to policy holder → redirect to Flow C</div>
+      <div class="error-item">S2a: number not found → suggest trying PH's number or concierge</div>
+      <div class="error-item">S2b: PH's number not found → verify or concierge</div>
+      <div class="error-item">S2b: OTP goes to PH's phone → beneficiary must coordinate</div>
+      <div class="error-item">S3b: name not in list → "My name is not here" → concierge</div>
+      <div class="error-item">No active policy → empty state + concierge</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FLOW E PANEL
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-flow-e">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2>Flow E — Non-Policy Walk-in</h2>
+      <span class="persona-badge np">Non-Policy</span>
+      <span class="persona-badge bn">Walk-in</span>
+    </div>
+    <p class="detail-desc">Retail or completely new user with no corporate/insurance policy. If unregistered, goes through registration (Visit account + TatvaPractice UHID). Only Doctor and Lab available — no AHC. All payments out-of-pocket.</p>
+
+    <div class="flow-timeline">
+      <div class="screen-node"><span class="sn-id">S1</span><span class="sn-name">Welcome</span><div class="sn-detail">Taps "Walking in"</div></div>
+      <div class="screen-node branch"><span class="sn-id">S2</span><span class="sn-name">Mobile + OTP</span><div class="sn-detail">Enter mobile → OTP → look up in Visit</div><span class="sn-api">GetPatientProfile</span></div>
+    </div>
+    <div class="branch-group">
+      <div class="branch-group-label">If not found → Registration</div>
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S2a</span><span class="sn-name">Registration Form</span><div class="sn-detail">Name (req), DOB (req), Gender (req), Email (opt). Mobile pre-filled.</div></div>
+        <div class="screen-node confirm"><span class="sn-id">S2b</span><span class="sn-name">Account Created</span><div class="sn-detail">"Welcome to Visit Clinic, [Name]." Visit + TP records created simultaneously.</div><span class="sn-api">CreatePatientAccount + CreatePatientRecord (UHID)</span></div>
+      </div>
+    </div>
+    <div class="flow-timeline">
+      <div class="screen-node branch"><span class="sn-id">S3</span><span class="sn-name">Select Service</span><div class="sn-detail">Doctor Appointment · Lab Tests only. No AHC.</div><span class="sn-api">FetchServices</span></div>
+    </div>
+
+    <div class="service-tabs">
+      <button class="service-tab active" onclick="showService('e','doctor')">Doctor (S4)</button>
+      <button class="service-tab" onclick="showService('e','lab')">Lab Tests (S5)</button>
+    </div>
+
+    <div class="service-panel active" id="e-doctor">
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S4a</span><span class="sn-name">Doctor Listing</span><span class="sn-api">FetchDoctorListing</span></div>
+        <div class="screen-node"><span class="sn-id">S4b</span><span class="sn-name">Slot Selection</span><span class="sn-api">FetchDoctorSlots</span></div>
+        <div class="screen-node"><span class="sn-id">S4c</span><span class="sn-name">Payment Confirmation (Full OOP)</span><div class="sn-detail">No benefit breakdown — full fee shown</div></div>
+        <div class="screen-node"><span class="sn-id">S4d</span><span class="sn-name">QR Payment</span></div>
+        <div class="screen-node confirm"><span class="sn-id">S4e</span><span class="sn-name">Confirmation + Token</span><div class="loop-back"><span class="arrow">↩</span> "Book Another Service" → back to S3</div></div>
+      </div>
+    </div>
+
+    <div class="service-panel" id="e-lab">
+      <div class="flow-timeline">
+        <div class="screen-node"><span class="sn-id">S5a</span><span class="sn-name">Lab Test Catalog (Add to Cart)</span><span class="sn-api">FetchLabCatalog</span></div>
+        <div class="screen-node"><span class="sn-id">S5b</span><span class="sn-name">Cart Review + Prep Instructions</span></div>
+        <div class="screen-node"><span class="sn-id">S5c</span><span class="sn-name">Payment Confirmation (Full OOP)</span><div class="sn-detail">No benefit check — full price</div></div>
+        <div class="screen-node"><span class="sn-id">S5d</span><span class="sn-name">QR Payment</span></div>
+        <div class="screen-node confirm"><span class="sn-id">S5e</span><span class="sn-name">Lab Confirmation + Token</span><div class="loop-back"><span class="arrow">↩</span> "Book Another Service" → back to S3</div></div>
+      </div>
+    </div>
+
+    <div class="error-section">
+      <h4>Unique Edge Cases</h4>
+      <div class="error-item">Duplicate registration race condition → load existing profile, skip reg</div>
+      <div class="error-item">Missing required fields → inline validation on S2a</div>
+      <div class="error-item">TP record creation fails → error + concierge. ⚠️ DECISION: rollback both or keep Visit account?</div>
+      <div class="error-item">No Visit app → WhatsApp still sent to mobile (not app-only)</div>
+      <div class="error-item">Session timeout after registration → account persists, only cart discarded</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     COMPARE PANEL
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-compare">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2>Flow Comparison</h2>
+    </div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>A · PH Pre</th>
+          <th>B · Ben Pre</th>
+          <th>C · PH Walk</th>
+          <th>D · Ben Walk</th>
+          <th>E · NonPolicy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Persona</td>
+          <td>Policy Holder</td>
+          <td>Beneficiary</td>
+          <td>Policy Holder</td>
+          <td>Beneficiary</td>
+          <td>Retail / New</td>
+        </tr>
+        <tr>
+          <td>Booking Status</td>
+          <td>Pre-booked</td>
+          <td>Pre-booked</td>
+          <td>Walk-in</td>
+          <td>Walk-in</td>
+          <td>Walk-in</td>
+        </tr>
+        <tr>
+          <td>Total Screens</td>
+          <td>4 + 2 sub</td>
+          <td>4 + 2 sub</td>
+          <td>4 + 14 svc</td>
+          <td>6 + 14 svc</td>
+          <td>5 + 10 svc</td>
+        </tr>
+        <tr>
+          <td>ID Method</td>
+          <td>Mobile/QR</td>
+          <td>Mobile/QR</td>
+          <td>Mobile+OTP</td>
+          <td>Own / PH mobile</td>
+          <td>Mobile+OTP</td>
+        </tr>
+        <tr>
+          <td>Registration</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span> Visit + TP</td>
+        </tr>
+        <tr>
+          <td>Beneficiary Select</td>
+          <td>Edge case only</td>
+          <td>Edge case only</td>
+          <td><span class="check">✓</span> S3</td>
+          <td>Self-confirm S3</td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Doctor Booking</td>
+          <td>Pre-done</td>
+          <td>Pre-done</td>
+          <td><span class="check">✓</span> S5a–e</td>
+          <td><span class="check">✓</span> S5a–e</td>
+          <td><span class="check">✓</span> S4a–e</td>
+        </tr>
+        <tr>
+          <td>Lab Booking</td>
+          <td>Pre-done</td>
+          <td>Pre-done</td>
+          <td><span class="check">✓</span> S6a–e (cart)</td>
+          <td><span class="check">✓</span> S6a–e (cart)</td>
+          <td><span class="check">✓</span> S5a–e (cart)</td>
+        </tr>
+        <tr>
+          <td>AHC Booking</td>
+          <td>Pre-done</td>
+          <td>Pre-done</td>
+          <td><span class="check">✓</span> S7a–f (+add-ons)</td>
+          <td><span class="check">✓</span> S7a–f (+add-ons)</td>
+          <td><span class="cross">✗</span> Not available</td>
+        </tr>
+        <tr>
+          <td>Payment Mode</td>
+          <td>Pre-paid</td>
+          <td>Pre-paid</td>
+          <td>Wallet + OOP</td>
+          <td>Wallet + OOP</td>
+          <td>Full OOP</td>
+        </tr>
+        <tr>
+          <td>Benefit Check</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td><span class="check">✓</span> FetchBenefitEligibility</td>
+          <td><span class="check">✓</span> FetchBenefitEligibility</td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>"Book Another" loops to</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>S3 (beneficiary)</td>
+          <td>S4 (service)</td>
+          <td>S3 (service)</td>
+        </tr>
+        <tr>
+          <td>Edge Cases</td>
+          <td>3</td>
+          <td>3</td>
+          <td>16</td>
+          <td>17</td>
+          <td>12</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showService(flow, svc) {
+  const prefix = flow + '-';
+  document.querySelectorAll('[id^="' + prefix + '"]').forEach(p => p.classList.remove('active'));
+  document.getElementById(prefix + svc).classList.add('active');
+  const tabs = event.target.parentElement;
+  tabs.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

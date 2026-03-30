@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visit Clinic — All Kiosk Flows (iPad Mockups)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 20px 48px;font-family:'Inter',sans-serif}
+
+/* ── Flow selector ── */
+.flow-tabs{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;justify-content:center}
+.flow-tab{font-size:11px;padding:6px 14px;border-radius:20px;border:1.5px solid #333;color:#888;background:transparent;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.flow-tab:hover{border-color:#714FFF;color:#bbb}
+.flow-tab.active{background:#714FFF;border-color:#714FFF;color:#fff}
+.flow-label{color:#888;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;text-align:center}
+
+/* ── Step pills ── */
+.step-nav{display:flex;gap:4px;margin-bottom:16px;align-items:center;flex-wrap:wrap;justify-content:center}
+.step-pill{font-size:10px;padding:4px 10px;border-radius:16px;cursor:pointer;border:1.5px solid #333;color:#666;background:transparent;transition:all .2s;font-family:'Inter',sans-serif;white-space:nowrap}
+.step-pill.active{background:#714FFF;border-color:#714FFF;color:#fff}
+.step-pill:hover:not(.active){border-color:#714FFF;color:#bbb}
+.step-arrow{color:#444;font-size:12px}
+
+/* ── iPad ── */
+.ipad-outer{position:relative;width:390px}
+.ipad-bezel{background:#1c1c1e;border-radius:36px;padding:16px 14px 20px;box-shadow:0 0 0 1px #3a3a3c,0 30px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.08);position:relative}
+.ipad-bezel::before{content:'';position:absolute;left:-4px;top:80px;width:4px;height:28px;background:#2c2c2e;border-radius:3px 0 0 3px;box-shadow:0 40px 0 #2c2c2e,0 80px 0 #2c2c2e}
+.ipad-bezel::after{content:'';position:absolute;right:-4px;top:110px;width:4px;height:50px;background:#2c2c2e;border-radius:0 3px 3px 0}
+.ipad-top-bar{display:flex;align-items:center;justify-content:center;height:20px;margin-bottom:6px}
+.ipad-camera{width:8px;height:8px;background:#2c2c2e;border-radius:50%;border:1px solid #444}
+.ipad-screen{background:#F5F3FF;border-radius:20px;overflow:hidden;width:100%;height:520px;position:relative}
+.ipad-home-bar{display:flex;justify-content:center;padding:10px 0 4px}
+.home-bar-pill{width:100px;height:4px;background:#3a3a3c;border-radius:3px}
+
+/* ── Status bar ── */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 14px 4px;font-size:10px;font-weight:600;color:#1F1E1E;background:#F5F3FF}
+.status-icons{display:flex;gap:4px;align-items:center}
+
+/* ── Kiosk header ── */
+.kiosk-header{padding:10px 16px 8px;background:#fff;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ede9ff}
+.visit-logo{display:flex;align-items:center;gap:6px}
+.logo-mark{width:26px;height:26px;background:#714FFF;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px}
+.logo-text{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#714FFF}
+.progress-track{width:90px;height:4px;background:#ede9ff;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:#714FFF;border-radius:4px;transition:width .4s ease}
+
+/* ── Screens ── */
+.screen-frame{display:none;flex-direction:column;height:100%}
+.screen-frame.active{display:flex}
+.flow-container{display:none}.flow-container.active{display:block}
+
+/* ── Shared screen styles ── */
+.scr-body{padding:16px 16px 12px;display:flex;flex-direction:column;flex:1;overflow-y:auto}
+.scr-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#1F1E1E;line-height:1.25;margin-bottom:4px}
+.scr-sub{font-size:11px;color:#686670;margin-bottom:14px;line-height:1.4}
+.scr-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#714FFF;margin-bottom:8px}
+
+/* ── Choice cards ── */
+.choice-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;border:2px solid transparent;display:flex;align-items:center;gap:12px;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 8px rgba(113,79,255,.06)}
+.choice-card:hover{border-color:#714FFF;box-shadow:0 4px 16px rgba(113,79,255,.15)}
+.choice-card.dim{opacity:.45;cursor:default}
+.choice-card.dim:hover{border-color:transparent;box-shadow:0 2px 8px rgba(113,79,255,.06)}
+.choice-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.choice-icon.purple{background:#EDE9FF}.choice-icon.coral{background:#FFF0EB}.choice-icon.green{background:#E6F9F0}.choice-icon.blue{background:#EBF5FF}
+.choice-text h3{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:#1F1E1E;margin-bottom:2px}
+.choice-text p{font-size:11px;color:#686670;line-height:1.3}
+.choice-arrow{margin-left:auto;color:#714FFF;font-size:16px}
+
+/* ── Phone input ── */
+.phone-display{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;border:2px solid #714FFF;display:flex;align-items:center;gap:8px}
+.phone-flag{font-size:14px}.phone-prefix{font-size:14px;font-weight:600;color:#686670;border-right:1.5px solid #ede9ff;padding-right:8px;margin-right:2px}
+.phone-number{font-size:16px;font-weight:600;color:#1F1E1E;letter-spacing:.04em;flex:1}
+.phone-cursor{width:2px;height:18px;background:#714FFF;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── Keypad ── */
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
+.key{background:#fff;border:none;border-radius:10px;padding:9px 0;font-size:15px;font-weight:600;color:#1F1E1E;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:background .1s;display:flex;flex-direction:column;align-items:center;gap:1px}
+.key:hover{background:#ede9ff}.key .sub{font-size:7px;color:#999;font-weight:400;letter-spacing:.08em}
+.key-del{background:#ede9ff;color:#714FFF}
+.key-send{grid-column:span 3;background:#714FFF;color:#fff;border-radius:12px;padding:12px 0;font-size:13px;font-weight:600;letter-spacing:.02em;box-shadow:0 4px 12px rgba(113,79,255,.35)}
+
+/* ── OTP ── */
+.otp-boxes{display:flex;gap:7px;margin-bottom:12px;justify-content:center}
+.otp-box{width:40px;height:48px;background:#fff;border-radius:10px;border:2px solid #ede9ff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#1F1E1E}
+.otp-box.filled{border-color:#714FFF;background:#faf8ff}
+.resend-row{text-align:center;font-size:11px;color:#686670;margin-bottom:10px}.resend-row span{color:#714FFF;font-weight:600}
+.back-row{display:flex;align-items:center;gap:6px;margin-bottom:14px;cursor:pointer;color:#714FFF;font-size:12px;font-weight:500}
+
+/* ── Appointment cards ── */
+.appt-card{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 2px 8px rgba(113,79,255,.06);border-left:3px solid #714FFF}
+.appt-card.lab{border-left-color:#FF9273}.appt-card.ahc{border-left-color:#22c55e}
+.appt-type-badge{font-size:9px;font-weight:600;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.06em}
+.badge-consult{background:#ede9ff;color:#714FFF}.badge-lab{background:#FFF0EB;color:#FF9273}.badge-ahc{background:#E6F9F0;color:#22c55e}
+.appt-detail-main{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:#1F1E1E;margin-bottom:3px;margin-top:6px}
+.appt-detail-sub{font-size:11px;color:#686670;display:flex;gap:10px}
+
+/* ── Buttons ── */
+.btn-primary{background:#714FFF;color:#fff;border:none;border-radius:12px;padding:13px 0;width:100%;font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(113,79,255,.35);letter-spacing:.02em;margin-top:auto}
+.btn-secondary{background:#F5F3FF;color:#714FFF;border:none;border-radius:12px;padding:11px 0;width:100%;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;margin-top:8px}
+.btn-outline{background:#fff;color:#714FFF;border:2px solid #714FFF;border-radius:12px;padding:11px 0;width:100%;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:8px}
+
+/* ── Token ── */
+.success-icon{width:52px;height:52px;background:#E6F9F0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:8px auto}
+.token-card{background:#fff;border-radius:16px;padding:14px;width:100%;margin-bottom:10px;box-shadow:0 4px 20px rgba(113,79,255,.1);text-align:center;border:1.5px solid #ede9ff}
+.token-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#686670;margin-bottom:4px}
+.token-number{font-family:'Bricolage Grotesque',sans-serif;font-size:44px;font-weight:700;color:#714FFF;letter-spacing:-.02em;line-height:1;margin-bottom:8px}
+.token-divider{width:40px;height:1.5px;background:#ede9ff;margin:8px auto}
+.token-doctor{font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:#1F1E1E;margin-bottom:2px}
+.token-location{font-size:11px;color:#686670;margin-bottom:6px}
+.token-wait{display:inline-flex;align-items:center;gap:4px;background:#F5F3FF;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;color:#714FFF}
+.whatsapp-nudge{background:#E7F7EE;border-radius:10px;padding:10px 12px;width:100%;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.wa-icon{font-size:18px;flex-shrink:0}.wa-text{font-size:11px;color:#2d7a50;line-height:1.3}.wa-text strong{font-weight:600}
+
+/* ── Beneficiary list ── */
+.ben-card{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 2px 8px rgba(113,79,255,.06);display:flex;align-items:center;gap:10px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.ben-card:hover{border-color:#714FFF}
+.ben-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.ben-avatar.self{background:#714FFF}.ben-avatar.dep1{background:#FF9273}.ben-avatar.dep2{background:#22c55e}.ben-avatar.dep3{background:#3b82f6}
+.ben-name{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:#1F1E1E}
+.ben-rel{font-size:11px;color:#686670}
+
+/* ── Service selector ── */
+.svc-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;border:2px solid transparent;display:flex;align-items:center;gap:14px;transition:all .2s;box-shadow:0 2px 8px rgba(113,79,255,.06)}
+.svc-card:hover{border-color:#714FFF;box-shadow:0 4px 16px rgba(113,79,255,.15)}
+.svc-card.disabled{opacity:.4;cursor:default}.svc-card.disabled:hover{border-color:transparent;box-shadow:0 2px 8px rgba(113,79,255,.06)}
+.svc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.svc-icon.dr{background:#EDE9FF}.svc-icon.lb{background:#FFF0EB}.svc-icon.ahc{background:#E6F9F0}
+.svc-text h3{font-family:'Montserrat',sans-serif;font-weight:600;font-size:14px;color:#1F1E1E;margin-bottom:2px}
+.svc-text p{font-size:11px;color:#686670;line-height:1.3}
+
+/* ── Doctor listing ── */
+.doc-card{background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(113,79,255,.06);display:flex;align-items:center;gap:10px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.doc-card:hover{border-color:#714FFF}
+.doc-photo{width:40px;height:40px;border-radius:50%;background:#ede9ff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.doc-name{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:#1F1E1E}
+.doc-spec{font-size:11px;color:#686670}
+.doc-avail{font-size:10px;color:#22c55e;font-weight:600}
+
+/* ── Slot grid ── */
+.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.slot{background:#fff;border:1.5px solid #ede9ff;border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:#1F1E1E}
+.slot:hover{border-color:#714FFF;background:#faf8ff}.slot.sel{background:#714FFF;color:#fff;border-color:#714FFF}
+.slot.gone{opacity:.35;cursor:default;text-decoration:line-through}
+
+/* ── Lab test items ── */
+.test-item{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.test-name{font-size:12px;font-weight:600;color:#1F1E1E;flex:1}
+.test-price{font-size:12px;font-weight:600;color:#714FFF;margin-right:8px}
+.test-add{width:28px;height:28px;border-radius:8px;background:#714FFF;color:#fff;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.test-add.added{background:#E6F9F0;color:#22c55e}
+.test-cat{font-size:10px;font-weight:600;color:#686670;text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;padding-left:2px}
+.cart-bar{background:#714FFF;color:#fff;border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:auto;cursor:pointer}
+.cart-count{font-size:13px;font-weight:600}.cart-total{font-size:11px;opacity:.85}
+
+/* ── Payment breakdown ── */
+.pay-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;color:#686670;border-bottom:1px solid #f3f0ff}
+.pay-row.total{font-weight:700;color:#1F1E1E;font-size:14px;border-bottom:none;padding-top:8px}
+.pay-row .covered{color:#22c55e}
+.qr-placeholder{width:120px;height:120px;background:#fff;border-radius:12px;border:2px solid #ede9ff;display:flex;align-items:center;justify-content:center;margin:16px auto;font-size:10px;color:#aaa;flex-direction:column;gap:4px}
+
+/* ── AHC package card ── */
+.ahc-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(113,79,255,.06);cursor:pointer;border:2px solid transparent;transition:all .2s}
+.ahc-card:hover{border-color:#22c55e}
+.ahc-name{font-family:'Montserrat',sans-serif;font-weight:600;font-size:14px;color:#1F1E1E;margin-bottom:4px}
+.ahc-includes{font-size:11px;color:#686670;margin-bottom:6px}
+.ahc-footer{display:flex;justify-content:space-between;align-items:center}
+.ahc-price{font-size:14px;font-weight:700;color:#714FFF}
+.ahc-duration{font-size:10px;color:#999}
+
+/* ── Registration form ── */
+.form-field{margin-bottom:10px}
+.form-label{font-size:11px;font-weight:600;color:#686670;margin-bottom:4px;display:block}
+.form-input{background:#fff;border:1.5px solid #ede9ff;border-radius:10px;padding:10px 12px;width:100%;font-size:13px;font-family:'Inter',sans-serif;color:#1F1E1E}
+.form-input:focus{outline:none;border-color:#714FFF}
+.form-input.prefilled{background:#faf8ff;color:#999}
+.form-row{display:flex;gap:8px}
+.form-row .form-field{flex:1}
+.form-required{color:#fb7185;font-size:10px}
+
+/* ── Error screen ── */
+.error-icon{width:52px;height:52px;background:#FFF0EB;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:24px auto 12px}
+.error-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px;color:#1F1E1E;margin-bottom:8px;text-align:center}
+.error-sub{font-size:12px;color:#686670;line-height:1.5;margin-bottom:20px;text-align:center}
+
+/* ── Info panel ── */
+.info-panel{margin-top:16px;width:390px;background:#1a1a1f;border-radius:16px;padding:14px 18px;border:1px solid #2a2a30}
+.info-step-name{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:#fff;margin-bottom:4px}
+.info-step-desc{font-size:12px;color:#888;line-height:1.5;margin-bottom:8px}
+.info-api{font-size:10px;color:#714FFF;background:#714FFF11;display:inline-block;padding:2px 8px;border-radius:4px;font-family:monospace;margin-right:4px;margin-bottom:4px}
+.nav-hint{text-align:center;font-size:11px;color:#555;margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- Flow selector -->
+<div class="flow-tabs">
+  <button class="flow-tab active" onclick="switchFlow('a')">A · PH PreBooked</button>
+  <button class="flow-tab" onclick="switchFlow('b')">B · Benef PreBooked</button>
+  <button class="flow-tab" onclick="switchFlow('c')">C · PH Walk-in</button>
+  <button class="flow-tab" onclick="switchFlow('d')">D · Benef Walk-in</button>
+  <button class="flow-tab" onclick="switchFlow('e')">E · NonPolicy Walk-in</button>
+</div>
+<div class="flow-label" id="flow-label">Flow A — PolicyHolder PreBooked</div>
+
+<!-- Step nav (dynamic) -->
+<div class="step-nav" id="step-nav"></div>
+
+<!-- iPad -->
+<div class="ipad-outer">
+  <div class="ipad-bezel">
+    <div class="ipad-top-bar"><div class="ipad-camera"></div></div>
+    <div class="ipad-screen">
+      <div class="status-bar"><span>10:30</span><div class="status-icons"><span>📶</span><span>🔋</span></div></div>
+      <div class="kiosk-header">
+        <div class="visit-logo">
+          <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M4 5l6 10 6-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="logo-text">Visit</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           FLOW A SCREENS
+      ═══════════════════════════════════ -->
+      <!-- S1 Welcome (shared) -->
+      <div class="screen-frame active" data-flow="a" data-screen="a-s1">
+        <div class="scr-body">
+          <div class="scr-title">Welcome to<br>Visit Health Clinic</div>
+          <div class="scr-sub">How would you like to check in today?</div>
+          <div class="choice-card" onclick="go('a','a-s2')"><div class="choice-icon purple">📅</div><div class="choice-text"><h3>I have a pre-booked appointment</h3><p>Consultation, lab test, or AHC</p></div><div class="choice-arrow">›</div></div>
+          <div class="choice-card dim"><div class="choice-icon coral">🚶</div><div class="choice-text"><h3>I'm walking in</h3><p>No prior booking</p></div><div class="choice-arrow">›</div></div>
+          <div style="margin-top:auto;text-align:center;font-size:10px;color:#aaa">Tap a card to begin</div>
+        </div>
+      </div>
+
+      <!-- A-S2 Mobile -->
+      <div class="screen-frame" data-flow="a" data-screen="a-s2">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:17px">Find your appointment</div>
+          <div class="scr-sub">Enter your mobile or scan your Visit QR code</div>
+          <div style="display:flex;gap:0;background:#ede9ff;border-radius:10px;padding:3px;margin-bottom:12px">
+            <div style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:11px;font-weight:600;background:#714FFF;color:#fff;box-shadow:0 2px 6px rgba(113,79,255,.3)">📱 Mobile Number</div>
+            <div style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:11px;font-weight:600;color:#714FFF;cursor:pointer" onclick="go('a','a-s2qr')">🔲 Scan QR Code</div>
+          </div>
+          <div class="phone-display"><span class="phone-flag">🇮🇳</span><span class="phone-prefix">+91</span><span class="phone-number">98765 4321</span><div class="phone-cursor"></div></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('a','a-otp')">Send OTP →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- A-S2 QR -->
+      <div class="screen-frame" data-flow="a" data-screen="a-s2qr">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:17px">Scan your QR code</div>
+          <div class="scr-sub">Hold your phone screen up to the camera</div>
+          <div style="flex:1;background:#111;border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden">
+            <div style="position:absolute;width:120px;height:120px;border:3px solid #714FFF;border-radius:8px;opacity:.5"></div>
+            <div style="font-size:48px;opacity:.25">📱</div>
+            <div style="position:absolute;bottom:10px;font-size:10px;color:#888">Camera active — align QR within frame</div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:#714FFF;font-weight:600;cursor:pointer;padding:8px" onclick="go('a','a-s2')">Use mobile number instead →</div>
+        </div>
+      </div>
+
+      <!-- A-OTP -->
+      <div class="screen-frame" data-flow="a" data-screen="a-otp">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('a','a-s2')">‹ Back</div>
+          <div class="scr-title" style="font-size:17px">Enter verification code</div>
+          <div class="scr-sub">We sent a 6-digit code to <strong>+91 98765 43210</strong></div>
+          <div class="otp-boxes"><div class="otp-box filled">8</div><div class="otp-box filled">3</div><div class="otp-box filled">4</div><div class="otp-box" style="border-color:#714FFF"></div><div class="otp-box"></div><div class="otp-box"></div></div>
+          <div class="resend-row">Didn't get it? <span>Resend in 0:24</span></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('a','a-s3')">Verify →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- A-S3 Appointments -->
+      <div class="screen-frame" data-flow="a" data-screen="a-s3">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Welcome back, Priya!</div>
+          <div class="scr-sub">Here are your appointments for today</div>
+          <div class="scr-label">Today's Schedule</div>
+          <div class="appt-card"><div><span class="appt-type-badge badge-consult">Consultation</span></div><div class="appt-detail-main">Dr. Anjali Mehta — General Physician</div><div class="appt-detail-sub"><span>🕐 10:45 AM</span><span>🚪 Cabin 3</span></div></div>
+          <div class="appt-card lab"><div><span class="appt-type-badge badge-lab">Lab Test</span></div><div class="appt-detail-main">Complete Blood Count (CBC)</div><div class="appt-detail-sub"><span>🕐 11:30 AM</span><span>🧪 Lab, Ground Floor</span></div></div>
+          <button class="btn-primary" onclick="go('a','a-s4')">Check In Now →</button>
+        </div>
+      </div>
+
+      <!-- A-S4 Token -->
+      <div class="screen-frame" data-flow="a" data-screen="a-s4">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:17px;text-align:center">You're checked in, Priya!</div>
+          <div class="scr-sub" style="text-align:center">Head to the waiting area</div>
+          <div class="token-card"><div class="token-label">Your Queue Token</div><div class="token-number">A-047</div><div class="token-divider"></div><div class="token-doctor">Dr. Anjali Mehta</div><div class="token-location">Cabin 3, Floor 1</div><div class="token-wait">⏱ ~12 min · 3 ahead</div></div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Live queue updates on +91 98765 43210</div></div>
+          <button class="btn-secondary" onclick="go('a','a-s1')">Done — Return to Start</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           FLOW B SCREENS
+      ═══════════════════════════════════ -->
+      <div class="screen-frame" data-flow="b" data-screen="b-s1">
+        <div class="scr-body">
+          <div class="scr-title">Welcome to<br>Visit Health Clinic</div>
+          <div class="scr-sub">How would you like to check in today?</div>
+          <div class="choice-card" onclick="go('b','b-s2')"><div class="choice-icon purple">📅</div><div class="choice-text"><h3>I have a pre-booked appointment</h3><p>Consultation, lab test, or AHC</p></div><div class="choice-arrow">›</div></div>
+          <div class="choice-card dim"><div class="choice-icon coral">🚶</div><div class="choice-text"><h3>I'm walking in</h3><p>No prior booking</p></div><div class="choice-arrow">›</div></div>
+        </div>
+      </div>
+      <div class="screen-frame" data-flow="b" data-screen="b-s2">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:17px">Find your appointment</div>
+          <div class="scr-sub">Enter your mobile or scan the QR from your WhatsApp</div>
+          <div class="phone-display"><span class="phone-flag">🇮🇳</span><span class="phone-prefix">+91</span><span class="phone-number">87654 3210</span><div class="phone-cursor"></div></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('b','b-s3')">Send OTP →</button>
+          </div>
+        </div>
+      </div>
+      <div class="screen-frame" data-flow="b" data-screen="b-s3">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Welcome, Rohan!</div>
+          <div class="scr-sub">Here are your appointments for today</div>
+          <div class="scr-label">Today's Schedule</div>
+          <div class="appt-card"><div><span class="appt-type-badge badge-consult">Consultation</span></div><div class="appt-detail-main">Dr. Sanjay Gupta — Pediatrics</div><div class="appt-detail-sub"><span>🕐 11:00 AM</span><span>🚪 Cabin 5</span></div></div>
+          <div style="background:#fff3cd;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:10px;color:#856404">Booked by policy holder Priya Sharma</div>
+          <button class="btn-primary" onclick="go('b','b-s4')">Check In Now →</button>
+        </div>
+      </div>
+      <div class="screen-frame" data-flow="b" data-screen="b-s4">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:17px;text-align:center">You're checked in, Rohan!</div>
+          <div class="scr-sub" style="text-align:center">Head to the waiting area</div>
+          <div class="token-card"><div class="token-label">Your Queue Token</div><div class="token-number">A-048</div><div class="token-divider"></div><div class="token-doctor">Dr. Sanjay Gupta</div><div class="token-location">Cabin 5, Floor 1</div><div class="token-wait">⏱ ~8 min · 2 ahead</div></div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Live queue updates on your number</div></div>
+          <button class="btn-secondary" onclick="go('b','b-s1')">Done — Return to Start</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           FLOW C SCREENS
+      ═══════════════════════════════════ -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s1">
+        <div class="scr-body">
+          <div class="scr-title">Welcome to<br>Visit Health Clinic</div>
+          <div class="scr-sub">How would you like to check in today?</div>
+          <div class="choice-card dim"><div class="choice-icon purple">📅</div><div class="choice-text"><h3>I have a pre-booked appointment</h3><p>Consultation, lab test, or AHC</p></div><div class="choice-arrow">›</div></div>
+          <div class="choice-card" onclick="go('c','c-s2')"><div class="choice-icon coral">🚶</div><div class="choice-text"><h3>I'm walking in</h3><p>No prior booking</p></div><div class="choice-arrow">›</div></div>
+        </div>
+      </div>
+      <div class="screen-frame" data-flow="c" data-screen="c-s2">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:17px">Let's find your account</div>
+          <div class="scr-sub">Enter your mobile number to get started</div>
+          <div class="phone-display"><span class="phone-flag">🇮🇳</span><span class="phone-prefix">+91</span><span class="phone-number">98765 4321</span><div class="phone-cursor"></div></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('c','c-s3')">Send OTP →</button>
+          </div>
+        </div>
+      </div>
+      <!-- C-S3 Beneficiaries -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s3">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Hi Priya! Who's this for?</div>
+          <div class="scr-sub">Select who you'd like to book for</div>
+          <div class="scr-label">Your Family</div>
+          <div class="ben-card" onclick="go('c','c-s4')"><div class="ben-avatar self">PS</div><div><div class="ben-name">Priya Sharma</div><div class="ben-rel">Self (Policy Holder)</div></div></div>
+          <div class="ben-card" onclick="go('c','c-s4')"><div class="ben-avatar dep1">RS</div><div><div class="ben-name">Rohan Sharma</div><div class="ben-rel">Son</div></div></div>
+          <div class="ben-card" onclick="go('c','c-s4')"><div class="ben-avatar dep2">AS</div><div><div class="ben-name">Amit Sharma</div><div class="ben-rel">Spouse</div></div></div>
+          <div class="ben-card" onclick="go('c','c-s4')"><div class="ben-avatar dep3">MS</div><div><div class="ben-name">Maya Sharma</div><div class="ben-rel">Mother</div></div></div>
+        </div>
+      </div>
+      <!-- C-S4 Select Service -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s4">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">What would you like?</div>
+          <div class="scr-sub">Booking for <strong>Priya Sharma</strong></div>
+          <div class="svc-card" onclick="go('c','c-s5a')"><div class="svc-icon dr">🩺</div><div class="svc-text"><h3>Doctor Appointment</h3><p>Book a consultation with available doctors</p></div><div class="choice-arrow">›</div></div>
+          <div class="svc-card" onclick="go('c','c-s6a')"><div class="svc-icon lb">🧪</div><div class="svc-text"><h3>Lab Tests</h3><p>Browse and book pathology tests</p></div><div class="choice-arrow">›</div></div>
+          <div class="svc-card" onclick="go('c','c-s7a')"><div class="svc-icon ahc">💚</div><div class="svc-text"><h3>Annual Health Check</h3><p>Comprehensive health packages</p></div><div class="choice-arrow">›</div></div>
+        </div>
+      </div>
+      <!-- C-S5a Doctor Listing -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s5a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s4')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Available Doctors</div>
+          <div class="scr-sub">Select a doctor to see available slots</div>
+          <div class="doc-card" onclick="go('c','c-s5b')"><div class="doc-photo">👩‍⚕️</div><div><div class="doc-name">Dr. Anjali Mehta</div><div class="doc-spec">General Physician</div><div class="doc-avail">3 slots available</div></div></div>
+          <div class="doc-card" onclick="go('c','c-s5b')"><div class="doc-photo">👨‍⚕️</div><div><div class="doc-name">Dr. Rakesh Patel</div><div class="doc-spec">Internal Medicine</div><div class="doc-avail">5 slots available</div></div></div>
+          <div class="doc-card" onclick="go('c','c-s5b')"><div class="doc-photo">👩‍⚕️</div><div><div class="doc-name">Dr. Meera Iyer</div><div class="doc-spec">Dermatology</div><div class="doc-avail">2 slots available</div></div></div>
+        </div>
+      </div>
+      <!-- C-S5b Slots -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s5b">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s5a')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Dr. Anjali Mehta</div>
+          <div class="scr-sub">General Physician · Cabin 3</div>
+          <div class="scr-label">Available Today</div>
+          <div class="slot-grid">
+            <div class="slot gone">10:00 AM</div><div class="slot gone">10:15 AM</div><div class="slot gone">10:30 AM</div>
+            <div class="slot sel">10:45 AM</div><div class="slot">11:00 AM</div><div class="slot">11:15 AM</div>
+            <div class="slot gone">11:30 AM</div><div class="slot">11:45 AM</div><div class="slot">12:00 PM</div>
+          </div>
+          <div style="background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)">
+            <span style="font-size:16px">🕐</span>
+            <div><div style="font-size:12px;font-weight:600;color:#1F1E1E">Selected: 10:45 AM</div><div style="font-size:10px;color:#686670">Dr. Anjali Mehta · Cabin 3</div></div>
+          </div>
+          <button class="btn-primary" onclick="go('c','c-s5c')">Continue to Payment →</button>
+        </div>
+      </div>
+      <!-- C-S5c Payment -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s5c">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s5b')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Payment Summary</div>
+          <div class="scr-sub">Dr. Anjali Mehta · 10:45 AM</div>
+          <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(113,79,255,.06);margin-bottom:12px">
+            <div class="pay-row"><span>Consultation fee</span><span>₹800</span></div>
+            <div class="pay-row"><span>Wallet coverage</span><span class="covered">-₹600</span></div>
+            <div class="pay-row total"><span>You Pay</span><span>₹200</span></div>
+          </div>
+          <div style="background:#E6F9F0;border-radius:8px;padding:8px 10px;font-size:10px;color:#2d7a50;margin-bottom:12px">💳 ₹600 covered by your corporate benefit wallet</div>
+          <button class="btn-primary" onclick="go('c','c-s5d')">Pay ₹200 →</button>
+        </div>
+      </div>
+      <!-- C-S5d QR Payment -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s5d">
+        <div class="scr-body" style="align-items:center">
+          <div class="scr-title" style="font-size:17px;text-align:center">Scan to Pay</div>
+          <div class="scr-sub" style="text-align:center">Amount: <strong>₹200</strong></div>
+          <div class="qr-placeholder"><span style="font-size:40px">📱</span><span>Scan QR with any UPI app</span></div>
+          <div style="font-size:11px;color:#686670;text-align:center;margin-bottom:12px">QR valid for 5 minutes</div>
+          <button class="btn-primary" onclick="go('c','c-s5e')">Payment Received ✓</button>
+        </div>
+      </div>
+      <!-- C-S5e Confirmation -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s5e">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:17px;text-align:center">Appointment Booked!</div>
+          <div class="scr-sub" style="text-align:center">You're checked in, Priya</div>
+          <div class="token-card"><div class="token-label">Your Queue Token</div><div class="token-number">A-052</div><div class="token-divider"></div><div class="token-doctor">Dr. Anjali Mehta</div><div class="token-location">Cabin 3 · 10:45 AM</div><div class="token-wait">⏱ ~15 min · 4 ahead</div></div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Confirmation + queue updates</div></div>
+          <button class="btn-primary" onclick="go('c','c-s3')" style="background:#22c55e;box-shadow:0 4px 14px rgba(34,197,94,.35)">Book Another Service →</button>
+          <button class="btn-secondary" onclick="go('c','c-s1')">Done — Return to Start</button>
+        </div>
+      </div>
+      <!-- C-S6a Lab Catalog -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s6a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s4')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Lab Tests</div>
+          <div class="scr-sub">Browse and add tests to your cart</div>
+          <div class="test-cat">Blood Tests</div>
+          <div class="test-item"><span class="test-name">Complete Blood Count</span><span class="test-price">₹350</span><button class="test-add added">✓</button></div>
+          <div class="test-item"><span class="test-name">HbA1c (Diabetes)</span><span class="test-price">₹500</span><button class="test-add">+</button></div>
+          <div class="test-cat">Thyroid</div>
+          <div class="test-item"><span class="test-name">TSH</span><span class="test-price">₹300</span><button class="test-add added">✓</button></div>
+          <div class="test-item"><span class="test-name">T3, T4, TSH Panel</span><span class="test-price">₹700</span><button class="test-add">+</button></div>
+          <div class="test-cat">Liver</div>
+          <div class="test-item"><span class="test-name">Liver Function Test</span><span class="test-price">₹450</span><button class="test-add">+</button></div>
+          <div class="cart-bar" onclick="go('c','c-s6b')"><span class="cart-count">🛒 2 tests</span><span class="cart-total">₹650 · Review Cart →</span></div>
+        </div>
+      </div>
+      <!-- C-S6b Cart Review -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s6b">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s6a')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Your Cart</div>
+          <div class="scr-sub">Review selected tests</div>
+          <div class="test-item"><span class="test-name">Complete Blood Count</span><span class="test-price">₹350</span><button class="test-add" style="background:#fb7185;font-size:12px">✕</button></div>
+          <div class="test-item"><span class="test-name">TSH</span><span class="test-price">₹300</span><button class="test-add" style="background:#fb7185;font-size:12px">✕</button></div>
+          <div style="background:#fff3cd;border-radius:8px;padding:8px 10px;font-size:10px;color:#856404;margin:8px 0">⚠ CBC requires no special preparation. TSH — no fasting needed.</div>
+          <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(113,79,255,.06);margin-bottom:12px">
+            <div class="pay-row"><span>2 tests</span><span>₹650</span></div>
+            <div class="pay-row total"><span>Total</span><span>₹650</span></div>
+          </div>
+          <button class="btn-primary" onclick="go('c','c-s6c')">Confirm and Proceed →</button>
+        </div>
+      </div>
+      <!-- C-S6c Lab Payment -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s6c">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Payment Summary</div>
+          <div class="scr-sub">2 lab tests</div>
+          <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(113,79,255,.06);margin-bottom:12px">
+            <div class="pay-row"><span>CBC + TSH</span><span>₹650</span></div>
+            <div class="pay-row"><span>Wallet coverage</span><span class="covered">-₹650</span></div>
+            <div class="pay-row total"><span>You Pay</span><span style="color:#22c55e">₹0 (Fully Covered)</span></div>
+          </div>
+          <div style="background:#E6F9F0;border-radius:8px;padding:8px 10px;font-size:10px;color:#2d7a50;margin-bottom:12px">💳 Entire amount covered by your corporate benefit wallet</div>
+          <button class="btn-primary" onclick="go('c','c-s6e')" style="background:#22c55e;box-shadow:0 4px 14px rgba(34,197,94,.35)">Confirm — No Payment Needed →</button>
+        </div>
+      </div>
+      <!-- C-S6e Lab Confirmation -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s6e">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:17px;text-align:center">Lab Tests Booked!</div>
+          <div class="scr-sub" style="text-align:center">Proceed to Sample Collection</div>
+          <div class="token-card"><div class="token-label">Lab Queue Token</div><div class="token-number">L-019</div><div class="token-divider"></div><div class="token-doctor">CBC, TSH</div><div class="token-location">Sample Collection, Ground Floor</div><div class="token-wait">⏱ ~5 min · 1 ahead</div></div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Results in 24–48 hrs</div></div>
+          <button class="btn-primary" onclick="go('c','c-s3')" style="background:#22c55e;box-shadow:0 4px 14px rgba(34,197,94,.35)">Book Another Service →</button>
+          <button class="btn-secondary" onclick="go('c','c-s1')">Done</button>
+        </div>
+      </div>
+      <!-- C-S7a AHC Listing -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s7a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s4')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Health Check Packages</div>
+          <div class="scr-sub">Annual packages for <strong>Priya Sharma</strong></div>
+          <div class="ahc-card" onclick="go('c','c-s7b')"><div class="ahc-name">Basic Health Checkup</div><div class="ahc-includes">15 tests · Blood, thyroid, liver, kidney</div><div class="ahc-footer"><span class="ahc-price">₹1,999</span><span class="ahc-duration">~2 hrs</span></div></div>
+          <div class="ahc-card" onclick="go('c','c-s7b')"><div class="ahc-name">Comprehensive Health Package</div><div class="ahc-includes">28 tests + Dr. consult · Full body + cardiac</div><div class="ahc-footer"><span class="ahc-price">₹4,499</span><span class="ahc-duration">~3 hrs</span></div></div>
+          <div class="ahc-card" onclick="go('c','c-s7b')"><div class="ahc-name">Women's Wellness</div><div class="ahc-includes">22 tests + Dr. consult · Hormonal + bone density</div><div class="ahc-footer"><span class="ahc-price">₹3,999</span><span class="ahc-duration">~2.5 hrs</span></div></div>
+        </div>
+      </div>
+      <!-- C-S7b AHC Details + Add-ons -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s7b">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s7a')">‹ Back</div>
+          <div class="scr-title" style="font-size:15px">Comprehensive Health Package</div>
+          <div style="font-size:11px;color:#686670;margin-bottom:8px">28 tests + Doctor consult · ~3 hours</div>
+          <div style="background:#fff;border-radius:10px;padding:10px 12px;font-size:11px;color:#686670;margin-bottom:8px;max-height:80px;overflow-y:auto;box-shadow:0 1px 4px rgba(0,0,0,.04);line-height:1.6">
+            <strong style="color:#1F1E1E">Included:</strong> CBC, ESR, HbA1c, Lipid Profile, LFT, KFT, Urine Routine, Thyroid Panel, Vitamin D, B12, Iron Studies, Blood Sugar F/PP, ECG, Chest X-Ray, Dr. Consultation
+          </div>
+          <div style="background:#fff3cd;border-radius:8px;padding:6px 10px;font-size:10px;color:#856404;margin-bottom:10px">⚠ 12-hour fasting required for blood sugar and lipid tests</div>
+          <div class="scr-label">Add More Tests</div>
+          <div class="test-item"><span class="test-name">PSA (Prostate)</span><span class="test-price">₹600</span><button class="test-add">+</button></div>
+          <div class="test-item"><span class="test-name">Vitamin K</span><span class="test-price">₹400</span><button class="test-add added">✓</button></div>
+          <div class="cart-bar" onclick="go('c','c-s7c')"><span class="cart-count">📦 Package + 1 add-on</span><span class="cart-total">₹4,899 · Review →</span></div>
+        </div>
+      </div>
+      <!-- C-S7c AHC Cart -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s7c">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('c','c-s7b')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Your AHC Cart</div>
+          <div style="background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)">
+            <div style="font-size:12px;font-weight:600;color:#1F1E1E;margin-bottom:4px">📦 Comprehensive Health Package</div>
+            <div style="font-size:10px;color:#686670">28 tests + Dr. consult</div>
+            <div style="font-size:12px;font-weight:600;color:#714FFF;margin-top:4px">₹4,499</div>
+          </div>
+          <div class="test-item"><span class="test-name">+ Vitamin K (add-on)</span><span class="test-price">₹400</span><button class="test-add" style="background:#fb7185;font-size:12px">✕</button></div>
+          <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(113,79,255,.06);margin:8px 0">
+            <div class="pay-row"><span>Package</span><span>₹4,499</span></div>
+            <div class="pay-row"><span>Vitamin K</span><span>₹400</span></div>
+            <div class="pay-row"><span>Wallet</span><span class="covered">-₹3,000</span></div>
+            <div class="pay-row total"><span>You Pay</span><span>₹1,899</span></div>
+          </div>
+          <button class="btn-primary" onclick="go('c','c-s7e')">Pay ₹1,899 →</button>
+        </div>
+      </div>
+      <!-- C-S7e AHC Confirmation -->
+      <div class="screen-frame" data-flow="c" data-screen="c-s7e">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:16px;text-align:center">AHC Booked!</div>
+          <div class="scr-sub" style="text-align:center">Follow the steps below</div>
+          <div class="token-card" style="text-align:left;padding:12px">
+            <div class="token-label" style="text-align:center">Visit Token: AH-005</div>
+            <div style="font-size:11px;color:#686670;margin-top:8px;line-height:1.6">
+              <strong style="color:#1F1E1E">Step 1</strong> — Sample Collection, Ground Floor<br>
+              <strong style="color:#1F1E1E">Step 2</strong> — Radiology (X-Ray), 1st Floor<br>
+              <strong style="color:#1F1E1E">Step 3</strong> — Dr. Consultation, Cabin 3
+            </div>
+          </div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Full schedule + prep instructions</div></div>
+          <button class="btn-primary" onclick="go('c','c-s3')" style="background:#22c55e;box-shadow:0 4px 14px rgba(34,197,94,.35)">Book Another Service →</button>
+          <button class="btn-secondary" onclick="go('c','c-s1')">Done</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           FLOW D SCREENS
+      ═══════════════════════════════════ -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s1">
+        <div class="scr-body">
+          <div class="scr-title">Welcome to<br>Visit Health Clinic</div>
+          <div class="scr-sub">How would you like to check in today?</div>
+          <div class="choice-card dim"><div class="choice-icon purple">📅</div><div class="choice-text"><h3>I have a pre-booked appointment</h3><p>Consultation, lab test, or AHC</p></div><div class="choice-arrow">›</div></div>
+          <div class="choice-card" onclick="go('d','d-s2')"><div class="choice-icon coral">🚶</div><div class="choice-text"><h3>I'm walking in</h3><p>No prior booking</p></div><div class="choice-arrow">›</div></div>
+        </div>
+      </div>
+      <!-- D-S2 Dual ID -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s2">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">How would you like to identify yourself?</div>
+          <div class="scr-sub">Choose the option that works best for you</div>
+          <div class="choice-card" onclick="go('d','d-s2a')"><div class="choice-icon purple">📱</div><div class="choice-text"><h3>Enter my own mobile number</h3><p>If you have a Visit account</p></div><div class="choice-arrow">›</div></div>
+          <div class="choice-card" onclick="go('d','d-s2b')"><div class="choice-icon blue">👥</div><div class="choice-text"><h3>Enter policy holder's mobile</h3><p>OTP will be sent to their phone</p></div><div class="choice-arrow">›</div></div>
+        </div>
+      </div>
+      <!-- D-S2a Own mobile -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s2a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('d','d-s2')">‹ Back</div>
+          <div class="scr-title" style="font-size:17px">Enter your mobile</div>
+          <div class="scr-sub">We'll verify you as a beneficiary</div>
+          <div class="phone-display"><span class="phone-flag">🇮🇳</span><span class="phone-prefix">+91</span><span class="phone-number">87654 3210</span><div class="phone-cursor"></div></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('d','d-s3a')">Send OTP →</button>
+          </div>
+        </div>
+      </div>
+      <!-- D-S2b Policy holder's mobile -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s2b">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('d','d-s2')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Enter policy holder's mobile</div>
+          <div class="scr-sub">OTP will be sent to their phone — please coordinate</div>
+          <div class="phone-display"><span class="phone-flag">🇮🇳</span><span class="phone-prefix">+91</span><span class="phone-number">98765 4321</span><div class="phone-cursor"></div></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('d','d-s3b')">Send OTP →</button>
+          </div>
+        </div>
+      </div>
+      <!-- D-S3a Beneficiary confirmed -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s3a">
+        <div class="scr-body" style="align-items:center;justify-content:center">
+          <div style="font-size:48px;margin-bottom:12px">👋</div>
+          <div class="scr-title" style="font-size:18px;text-align:center">Welcome, Rohan!</div>
+          <div class="scr-sub" style="text-align:center">You are a beneficiary under<br><strong>Priya Sharma</strong>'s policy</div>
+          <div style="background:#E6F9F0;border-radius:10px;padding:10px 14px;font-size:12px;color:#2d7a50;font-weight:600;margin-bottom:16px;width:100%;text-align:center">✓ Identity verified</div>
+          <button class="btn-primary" onclick="go('d','d-s4')">Continue to Booking →</button>
+        </div>
+      </div>
+      <!-- D-S3b Select from list -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s3b">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Which beneficiary are you?</div>
+          <div class="scr-sub">Tap your name to confirm your identity</div>
+          <div class="scr-label">Beneficiaries under Priya Sharma</div>
+          <div class="ben-card" onclick="go('d','d-s4')"><div class="ben-avatar dep1">RS</div><div><div class="ben-name">Rohan Sharma</div><div class="ben-rel">Son</div></div></div>
+          <div class="ben-card" onclick="go('d','d-s4')"><div class="ben-avatar dep2">AS</div><div><div class="ben-name">Amit Sharma</div><div class="ben-rel">Spouse</div></div></div>
+          <div class="ben-card" onclick="go('d','d-s4')"><div class="ben-avatar dep3">MS</div><div><div class="ben-name">Maya Sharma</div><div class="ben-rel">Mother</div></div></div>
+          <div style="text-align:center;margin-top:12px;font-size:11px;color:#714FFF;font-weight:600;cursor:pointer">My name is not here →</div>
+        </div>
+      </div>
+      <!-- D-S4 Service select (same as C) -->
+      <div class="screen-frame" data-flow="d" data-screen="d-s4">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">What would you like?</div>
+          <div class="scr-sub">Booking for <strong>Rohan Sharma</strong></div>
+          <div class="svc-card"><div class="svc-icon dr">🩺</div><div class="svc-text"><h3>Doctor Appointment</h3><p>Book a consultation</p></div><div class="choice-arrow">›</div></div>
+          <div class="svc-card"><div class="svc-icon lb">🧪</div><div class="svc-text"><h3>Lab Tests</h3><p>Browse and book tests</p></div><div class="choice-arrow">›</div></div>
+          <div class="svc-card"><div class="svc-icon ahc">💚</div><div class="svc-text"><h3>Annual Health Check</h3><p>Comprehensive packages</p></div><div class="choice-arrow">›</div></div>
+          <div style="font-size:10px;color:#686670;text-align:center;margin-top:auto;padding:8px">Same booking flows as Flow C from here · "Book Another" loops to this screen</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           FLOW E SCREENS
+      ═══════════════════════════════════ -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s1">
+        <div class="scr-body">
+          <div class="scr-title">Welcome to<br>Visit Health Clinic</div>
+          <div class="scr-sub">How would you like to check in today?</div>
+          <div class="choice-card dim"><div class="choice-icon purple">📅</div><div class="choice-text"><h3>I have a pre-booked appointment</h3><p>Consultation, lab test, or AHC</p></div><div class="choice-arrow">›</div></div>
+          <div class="choice-card" onclick="go('e','e-s2')"><div class="choice-icon coral">🚶</div><div class="choice-text"><h3>I'm walking in</h3><p>No prior booking</p></div><div class="choice-arrow">›</div></div>
+        </div>
+      </div>
+      <div class="screen-frame" data-flow="e" data-screen="e-s2">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:17px">Let's find your account</div>
+          <div class="scr-sub">Enter your mobile number</div>
+          <div class="phone-display"><span class="phone-flag">🇮🇳</span><span class="phone-prefix">+91</span><span class="phone-number">77777 1234</span><div class="phone-cursor"></div></div>
+          <div class="keypad">
+            <button class="key">1</button><button class="key">2<span class="sub">ABC</span></button><button class="key">3<span class="sub">DEF</span></button>
+            <button class="key">4<span class="sub">GHI</span></button><button class="key">5<span class="sub">JKL</span></button><button class="key">6<span class="sub">MNO</span></button>
+            <button class="key">7<span class="sub">PQRS</span></button><button class="key">8<span class="sub">TUV</span></button><button class="key">9<span class="sub">WXYZ</span></button>
+            <button class="key">*</button><button class="key">0</button><button class="key key-del">⌫</button>
+            <button class="key key-send" onclick="go('e','e-s2a')">Send OTP →</button>
+          </div>
+        </div>
+      </div>
+      <!-- E-S2a Registration -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s2a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('e','e-s2')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Create Your Account</div>
+          <div class="scr-sub">We didn't find an account for this number. Let's set one up.</div>
+          <div class="form-field"><label class="form-label">Mobile Number</label><input class="form-input prefilled" value="+91 77777 12345" readonly></div>
+          <div class="form-field"><label class="form-label">Full Name <span class="form-required">*</span></label><input class="form-input" value="Neha Kapoor" style="border-color:#714FFF"></div>
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">Date of Birth <span class="form-required">*</span></label><input class="form-input" value="15/03/1990" style="border-color:#714FFF"></div>
+            <div class="form-field"><label class="form-label">Gender <span class="form-required">*</span></label><input class="form-input" value="Female" style="border-color:#714FFF"></div>
+          </div>
+          <div class="form-field"><label class="form-label">Email <span style="font-size:9px;color:#aaa">(optional)</span></label><input class="form-input" placeholder="email@example.com"></div>
+          <button class="btn-primary" onclick="go('e','e-s2b')" style="margin-top:8px">Create Account →</button>
+        </div>
+      </div>
+      <!-- E-S2b Account created -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s2b">
+        <div class="scr-body" style="align-items:center;justify-content:center">
+          <div class="success-icon">🎉</div>
+          <div class="scr-title" style="font-size:18px;text-align:center">Welcome to Visit Clinic,<br>Neha!</div>
+          <div class="scr-sub" style="text-align:center">Your account has been created<br>UHID: <strong>VC-2024-00891</strong></div>
+          <div style="background:#E6F9F0;border-radius:10px;padding:10px 14px;font-size:11px;color:#2d7a50;width:100%;text-align:center;margin-bottom:12px">✓ Visit account + TatvaPractice record created</div>
+          <button class="btn-primary" onclick="go('e','e-s3')">Continue to Booking →</button>
+        </div>
+      </div>
+      <!-- E-S3 Service select (no AHC) -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s3">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">What would you like?</div>
+          <div class="scr-sub">Welcome, <strong>Neha Kapoor</strong></div>
+          <div class="svc-card" onclick="go('e','e-s4a')"><div class="svc-icon dr">🩺</div><div class="svc-text"><h3>Doctor Appointment</h3><p>Book a consultation with available doctors</p></div><div class="choice-arrow">›</div></div>
+          <div class="svc-card" onclick="go('e','e-s5a')"><div class="svc-icon lb">🧪</div><div class="svc-text"><h3>Lab Tests</h3><p>Browse and book pathology tests</p></div><div class="choice-arrow">›</div></div>
+          <div class="svc-card disabled"><div class="svc-icon ahc">💚</div><div class="svc-text"><h3>Annual Health Check</h3><p style="color:#fb7185">Available for policy holders only</p></div></div>
+        </div>
+      </div>
+      <!-- E-S4a Doctor listing -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s4a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('e','e-s3')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Available Doctors</div>
+          <div class="scr-sub">Select a doctor to see available slots</div>
+          <div class="doc-card" onclick="go('e','e-s4b')"><div class="doc-photo">👩‍⚕️</div><div><div class="doc-name">Dr. Anjali Mehta</div><div class="doc-spec">General Physician</div><div class="doc-avail">3 slots available</div></div></div>
+          <div class="doc-card" onclick="go('e','e-s4b')"><div class="doc-photo">👨‍⚕️</div><div><div class="doc-name">Dr. Rakesh Patel</div><div class="doc-spec">Internal Medicine</div><div class="doc-avail">5 slots available</div></div></div>
+        </div>
+      </div>
+      <!-- E-S4b Slot -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s4b">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('e','e-s4a')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Dr. Anjali Mehta</div>
+          <div class="scr-sub">General Physician · Cabin 3</div>
+          <div class="scr-label">Available Today</div>
+          <div class="slot-grid">
+            <div class="slot gone">10:00</div><div class="slot gone">10:15</div><div class="slot sel">10:30</div>
+            <div class="slot">10:45</div><div class="slot">11:00</div><div class="slot">11:15</div>
+          </div>
+          <button class="btn-primary" onclick="go('e','e-s4c')">Continue to Payment →</button>
+        </div>
+      </div>
+      <!-- E-S4c Payment (full OOP) -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s4c">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Payment Summary</div>
+          <div class="scr-sub">Dr. Anjali Mehta · 10:30 AM</div>
+          <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(113,79,255,.06);margin-bottom:12px">
+            <div class="pay-row"><span>Consultation fee</span><span>₹800</span></div>
+            <div class="pay-row total"><span>You Pay</span><span>₹800</span></div>
+          </div>
+          <div style="background:#FFF0EB;border-radius:8px;padding:8px 10px;font-size:10px;color:#c2410c;margin-bottom:12px">Full amount payable — no policy or wallet benefits applied</div>
+          <button class="btn-primary" onclick="go('e','e-s4e')">Pay ₹800 →</button>
+        </div>
+      </div>
+      <!-- E-S4e Confirmation -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s4e">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:17px;text-align:center">Appointment Booked!</div>
+          <div class="scr-sub" style="text-align:center">You're checked in, Neha</div>
+          <div class="token-card"><div class="token-label">Your Queue Token</div><div class="token-number">W-012</div><div class="token-divider"></div><div class="token-doctor">Dr. Anjali Mehta</div><div class="token-location">Cabin 3 · 10:30 AM</div><div class="token-wait">⏱ ~10 min</div></div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Confirmation + queue updates</div></div>
+          <button class="btn-primary" onclick="go('e','e-s3')" style="background:#22c55e;box-shadow:0 4px 14px rgba(34,197,94,.35)">Book Another Service →</button>
+          <button class="btn-secondary" onclick="go('e','e-s1')">Done</button>
+        </div>
+      </div>
+      <!-- E-S5a Lab catalog (same look as C but no benefits) -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s5a">
+        <div class="scr-body">
+          <div class="back-row" onclick="go('e','e-s3')">‹ Back</div>
+          <div class="scr-title" style="font-size:16px">Lab Tests</div>
+          <div class="scr-sub">Browse and add tests to your cart</div>
+          <div class="test-cat">Blood Tests</div>
+          <div class="test-item"><span class="test-name">Complete Blood Count</span><span class="test-price">₹350</span><button class="test-add added">✓</button></div>
+          <div class="test-item"><span class="test-name">HbA1c</span><span class="test-price">₹500</span><button class="test-add">+</button></div>
+          <div class="test-cat">Thyroid</div>
+          <div class="test-item"><span class="test-name">TSH</span><span class="test-price">₹300</span><button class="test-add">+</button></div>
+          <div class="cart-bar" onclick="go('e','e-s5c')"><span class="cart-count">🛒 1 test</span><span class="cart-total">₹350 · Review Cart →</span></div>
+        </div>
+      </div>
+      <!-- E-S5c Payment (OOP) -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s5c">
+        <div class="scr-body">
+          <div class="scr-title" style="font-size:16px">Payment Summary</div>
+          <div class="scr-sub">1 lab test</div>
+          <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(113,79,255,.06);margin-bottom:12px">
+            <div class="pay-row"><span>CBC</span><span>₹350</span></div>
+            <div class="pay-row total"><span>You Pay</span><span>₹350</span></div>
+          </div>
+          <div style="background:#FFF0EB;border-radius:8px;padding:8px 10px;font-size:10px;color:#c2410c;margin-bottom:12px">Full amount payable — no benefits</div>
+          <button class="btn-primary" onclick="go('e','e-s5e')">Pay ₹350 →</button>
+        </div>
+      </div>
+      <!-- E-S5e Lab confirmation -->
+      <div class="screen-frame" data-flow="e" data-screen="e-s5e">
+        <div class="scr-body" style="align-items:center">
+          <div class="success-icon">✅</div>
+          <div class="scr-title" style="font-size:17px;text-align:center">Lab Test Booked!</div>
+          <div class="scr-sub" style="text-align:center">Proceed to Sample Collection</div>
+          <div class="token-card"><div class="token-label">Lab Queue Token</div><div class="token-number">L-023</div><div class="token-divider"></div><div class="token-doctor">CBC</div><div class="token-location">Sample Collection, GF</div><div class="token-wait">⏱ ~5 min</div></div>
+          <div class="whatsapp-nudge"><div class="wa-icon">💬</div><div class="wa-text"><strong>WhatsApp sent!</strong> Results in 24–48 hrs</div></div>
+          <button class="btn-primary" onclick="go('e','e-s3')" style="background:#22c55e;box-shadow:0 4px 14px rgba(34,197,94,.35)">Book Another Service →</button>
+          <button class="btn-secondary" onclick="go('e','e-s1')">Done</button>
+        </div>
+      </div>
+
+    </div><!-- /ipad-screen -->
+    <div class="ipad-home-bar"><div class="home-bar-pill"></div></div>
+  </div>
+</div>
+
+<!-- Info panel -->
+<div class="info-panel">
+  <div class="info-step-name" id="info-name">S1 — Welcome Screen</div>
+  <div class="info-step-desc" id="info-desc">Shared entry point across all flows. Patient chooses between pre-booked or walk-in.</div>
+  <div id="info-apis"></div>
+</div>
+<div class="nav-hint">Click flow tabs to switch · Click step pills or on-screen buttons to navigate</div>
+
+<script>
+const flowData = {
+  a: {
+    label: 'Flow A — PolicyHolder PreBooked',
+    screens: [
+      {id:'a-s1',pill:'S1 Welcome',p:20,name:'S1 — Welcome',desc:'Shared entry. Patient taps "Pre-booked appointment."',apis:[]},
+      {id:'a-s2',pill:'S2 Mobile',p:35,name:'S2 — Mobile Entry',desc:'Enter mobile number on kiosk keypad. Tab to switch to QR scan.',apis:['OTP Service']},
+      {id:'a-s2qr',pill:'S2 QR',p:35,name:'S2 — QR Scan',desc:'Camera viewfinder for scanning Visit app QR code.',apis:['QR Scanner']},
+      {id:'a-otp',pill:'OTP',p:50,name:'S2 — OTP Verification',desc:'6-digit code sent to registered mobile. 3 wrong → concierge.',apis:['OTP Verify']},
+      {id:'a-s3',pill:'S3 Appts',p:75,name:'S3 — Appointment List',desc:'All today\'s orders for this patient. Check-in is clinic-wide.',apis:['GetPatientProfile','FetchOrders']},
+      {id:'a-s4',pill:'S4 Token',p:100,name:'S4 — Queue Token',desc:'Token + WhatsApp sent. Directions to service area.',apis:['QueueService']},
+    ]},
+  b: {
+    label: 'Flow B — Beneficiary PreBooked',
+    screens: [
+      {id:'b-s1',pill:'S1 Welcome',p:20,name:'S1 — Welcome',desc:'Taps "Pre-booked appointment."',apis:[]},
+      {id:'b-s2',pill:'S2 Mobile',p:40,name:'S2 — Mobile / QR',desc:'Enter mobile or scan WhatsApp QR.',apis:['OTP Service']},
+      {id:'b-s3',pill:'S3 Appts',p:70,name:'S3 — Appointments',desc:'Shows beneficiary name. Notes "Booked by [PH]."',apis:['GetPatientProfile','FetchOrders']},
+      {id:'b-s4',pill:'S4 Token',p:100,name:'S4 — Queue Token',desc:'Token + WhatsApp. Identical to Flow A.',apis:['QueueService']},
+    ]},
+  c: {
+    label: 'Flow C — PolicyHolder Walk-in',
+    screens: [
+      {id:'c-s1',pill:'S1',p:6,name:'S1 — Welcome',desc:'Taps "I\'m walking in."',apis:[]},
+      {id:'c-s2',pill:'S2 Mobile',p:12,name:'S2 — Mobile + OTP',desc:'Enter mobile. OTP verifies. Fetches beneficiary list.',apis:['OTP','GetBeneficiaries']},
+      {id:'c-s3',pill:'S3 Benef',p:20,name:'S3 — Select Beneficiary',desc:'List of all beneficiaries including self. Tap one to book for.',apis:[]},
+      {id:'c-s4',pill:'S4 Service',p:28,name:'S4 — Select Service',desc:'Doctor / Lab / AHC. Services fetched per beneficiary.',apis:['FetchServices']},
+      {id:'c-s5a',pill:'S5a Dr',p:36,name:'S5a — Doctor Listing',desc:'Available doctors with profiles and slot count.',apis:['FetchDoctorListing']},
+      {id:'c-s5b',pill:'S5b Slot',p:44,name:'S5b — Slot Selection',desc:'Time slots for selected doctor. Greyed = taken.',apis:['FetchDoctorSlots']},
+      {id:'c-s5c',pill:'S5c Pay',p:52,name:'S5c — Payment Confirmation',desc:'Fee with wallet/benefit deduction breakdown.',apis:['FetchBenefitEligibility']},
+      {id:'c-s5d',pill:'S5d QR',p:58,name:'S5d — QR Payment',desc:'Scan UPI QR. 5-min expiry.',apis:['PaymentService']},
+      {id:'c-s5e',pill:'S5e ✓',p:64,name:'S5e — Doctor Confirmation',desc:'Token + WhatsApp. "Book Another Service" → S3.',apis:['QueueService']},
+      {id:'c-s6a',pill:'S6a Lab',p:40,name:'S6a — Lab Catalog',desc:'Browse tests by category. Add to cart. Floating cart icon.',apis:['FetchLabCatalog']},
+      {id:'c-s6b',pill:'S6b Cart',p:50,name:'S6b — Cart Review',desc:'All added tests with prices + prep instructions. Remove items.',apis:[]},
+      {id:'c-s6c',pill:'S6c Pay',p:60,name:'S6c — Lab Payment',desc:'Benefit breakdown. May be fully covered (zero pay).',apis:['FetchBenefitEligibility']},
+      {id:'c-s6e',pill:'S6e ✓',p:70,name:'S6e — Lab Confirmation',desc:'Lab queue token. Directions to Sample Collection.',apis:['QueueService']},
+      {id:'c-s7a',pill:'S7a AHC',p:40,name:'S7a — AHC Packages',desc:'Available health check packages with pricing.',apis:['FetchAHCPackages']},
+      {id:'c-s7b',pill:'S7b Detail',p:50,name:'S7b — Package Details + Add-ons',desc:'Full test breakdown. Add individual tests on top.',apis:['FetchLabCatalog']},
+      {id:'c-s7c',pill:'S7c Cart',p:60,name:'S7c — AHC Cart Review',desc:'Package + add-ons. Can remove add-ons only.',apis:[]},
+      {id:'c-s7e',pill:'S7f ✓',p:80,name:'S7f — AHC Confirmation',desc:'Visit token. Step-by-step guide: blood → X-ray → doctor.',apis:['QueueService']},
+    ]},
+  d: {
+    label: 'Flow D — Beneficiary Walk-in',
+    screens: [
+      {id:'d-s1',pill:'S1',p:10,name:'S1 — Welcome',desc:'Taps "Walking in."',apis:[]},
+      {id:'d-s2',pill:'S2 ID',p:20,name:'S2 — Dual ID Choice',desc:'Two paths: own mobile or policy holder\'s mobile.',apis:[]},
+      {id:'d-s2a',pill:'S2a Own',p:30,name:'S2a — Own Mobile',desc:'OTP to own phone. System checks if beneficiary.',apis:['GetBeneficiaryDetails']},
+      {id:'d-s2b',pill:'S2b PH',p:30,name:'S2b — PH Mobile',desc:'OTP to policy holder\'s phone. Must coordinate.',apis:['GetBeneficiaries']},
+      {id:'d-s3a',pill:'S3a Confirm',p:45,name:'S3a — Identity Confirmed',desc:'"You are a beneficiary under [PH]\'s policy."',apis:[]},
+      {id:'d-s3b',pill:'S3b List',p:45,name:'S3b — Self-select',desc:'Tap your name from beneficiary list.',apis:[]},
+      {id:'d-s4',pill:'S4 Service',p:60,name:'S4 — Select Service',desc:'Doctor / Lab / AHC. Same sub-flows as C. Loop → S4.',apis:['FetchServices']},
+    ]},
+  e: {
+    label: 'Flow E — NonPolicy Walk-in',
+    screens: [
+      {id:'e-s1',pill:'S1',p:8,name:'S1 — Welcome',desc:'Taps "Walking in."',apis:[]},
+      {id:'e-s2',pill:'S2 Mobile',p:16,name:'S2 — Mobile + OTP',desc:'Enter mobile. If found → S3. If not → registration.',apis:['GetPatientProfile']},
+      {id:'e-s2a',pill:'S2a Register',p:28,name:'S2a — Registration Form',desc:'Name, DOB, Gender (required). Email optional. Mobile pre-filled.',apis:[]},
+      {id:'e-s2b',pill:'S2b Created',p:36,name:'S2b — Account Created',desc:'Visit + TP accounts created. UHID generated.',apis:['CreatePatientAccount','CreatePatientRecord']},
+      {id:'e-s3',pill:'S3 Service',p:44,name:'S3 — Select Service',desc:'Doctor + Lab only. AHC greyed out (policy only).',apis:['FetchServices']},
+      {id:'e-s4a',pill:'S4a Dr',p:52,name:'S4a — Doctor Listing',desc:'Available doctors.',apis:['FetchDoctorListing']},
+      {id:'e-s4b',pill:'S4b Slot',p:58,name:'S4b — Slot Selection',desc:'Time slots for selected doctor.',apis:['FetchDoctorSlots']},
+      {id:'e-s4c',pill:'S4c Pay',p:66,name:'S4c — Payment (Full OOP)',desc:'Full fee — no benefits or wallet. Out-of-pocket only.',apis:[]},
+      {id:'e-s4e',pill:'S4e ✓',p:78,name:'S4e — Doctor Confirmation',desc:'Token + WhatsApp. Loop → S3.',apis:['QueueService']},
+      {id:'e-s5a',pill:'S5a Lab',p:52,name:'S5a — Lab Catalog',desc:'Same catalog as C but no benefit coverage.',apis:['FetchLabCatalog']},
+      {id:'e-s5c',pill:'S5c Pay',p:66,name:'S5c — Lab Payment (OOP)',desc:'Full price. No wallet deduction.',apis:[]},
+      {id:'e-s5e',pill:'S5e ✓',p:78,name:'S5e — Lab Confirmation',desc:'Lab token. Loop → S3.',apis:['QueueService']},
+    ]},
+};
+
+let currentFlow = 'a';
+
+function switchFlow(f) {
+  currentFlow = f;
+  document.querySelectorAll('.flow-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('flow-label').textContent = flowData[f].label;
+  buildStepNav(f);
+  go(f, flowData[f].screens[0].id);
+}
+
+function buildStepNav(f) {
+  const nav = document.getElementById('step-nav');
+  nav.innerHTML = flowData[f].screens.map((s,i) =>
+    (i>0?'<span class="step-arrow">›</span>':'') +
+    `<span class="step-pill${i===0?' active':''}" data-sid="${s.id}" onclick="go('${f}','${s.id}')">${s.pill}</span>`
+  ).join('');
+}
+
+function go(flow, screenId) {
+  document.querySelectorAll('.screen-frame').forEach(s => s.classList.remove('active'));
+  const el = document.querySelector(`[data-screen="${screenId}"]`);
+  if(el) el.classList.add('active');
+
+  const scr = flowData[flow].screens.find(s => s.id === screenId);
+  if(scr) {
+    document.getElementById('progress-fill').style.width = scr.p + '%';
+    document.getElementById('info-name').textContent = scr.name;
+    document.getElementById('info-desc').textContent = scr.desc;
+    document.getElementById('info-apis').innerHTML = scr.apis.map(a => `<span class="info-api">${a}</span>`).join('');
+  }
+
+  document.querySelectorAll('.step-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.sid === screenId);
+  });
+}
+
+// Init
+buildStepNav('a');
+</script>
+</body>
+</html>

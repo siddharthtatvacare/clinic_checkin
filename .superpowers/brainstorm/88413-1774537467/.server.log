@@ -1,0 +1,4 @@
+{"type":"server-started","port":49818,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:49818","screen_dir":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/88413-1774537467"}
+{"type":"screen-added","file":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/88413-1774537467/all-flows-map.html"}
+{"type":"screen-added","file":"/Users/siddharthrajagopal/Claude projects/clinics-strategy/check-in/checkin_proto/.superpowers/brainstorm/88413-1774537467/all-flows-ipad.html"}
+{"type":"server-stopped","reason":"idle timeout"}
