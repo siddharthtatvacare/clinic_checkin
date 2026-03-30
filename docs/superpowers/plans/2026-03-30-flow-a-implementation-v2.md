@@ -10,6 +10,8 @@
 
 **Tech Stack:** Create React App + React 18 + TypeScript, Tailwind CSS v3 (PostCSS), Framer Motion, Lucide React, `@zxing/library` (QR camera reading), Jest + React Testing Library
 
+**Brand Reference:** All colors, fonts, logo URLs, and design tokens are documented in `src/tokens/brand.md` (extracted from getvisitapp.com on 2026-03-17). This is the single source of truth — all values in this plan are derived from it.
+
 ---
 
 ## Key Architectural Decisions
@@ -20,7 +22,7 @@
 | Provider architecture | Separate providers (Session, Error, Telemetry) | Cleaner separation, easier to test independently |
 | State management | `useReducer` per flow + Context for cross-cutting | Maps to XState later; no new deps |
 | API calls | `useApiCall` hook per call site | Each screen manages its own loading/error/retry independently |
-| Theme enforcement | Tailwind v3 `tailwind.config.js` → semantic classes | `bg-brand` not `bg-[#714FFF]` — single source of truth |
+| Theme enforcement | Tailwind v3 `tailwind.config.js` → semantic classes | Values from `src/tokens/brand.md`; `bg-brand` not `bg-[#714FFF]` |
 | Idle timeout | Per-screen configurable via `idleConfig.ts` | S1=none, S2/S3=120s, S4=30s, errors=60s |
 | Error recovery | ErrorBoundary → "Return to Start" | Safest kiosk recovery — reset to clean state |
 | Device auth | Pre-provisioned env vars | No registration ceremony for MVP; upgrade path exists |
@@ -35,7 +37,11 @@
 checkin_proto/
 ├── public/
 │   ├── index.html                     ← Google Fonts embed + PWA manifest link
-│   └── visit-logo.svg
+│   ├── visit-logo.svg                 ← Full wordmark (icon + "Visit" text) from getvisitapp.com
+│   ├── visit-icon.svg                 ← Icon-only mark (d+ symbol) for kiosk header
+│   ├── visit-logo-white.png           ← White wordmark for dark backgrounds
+│   ├── favicon-192x192.png            ← PWA icon sourced from getvisitapp.com
+│   └── manifest.json                  ← PWA manifest referencing real favicon
 ├── package.json
 ├── tailwind.config.js                 ← Tailwind v3 theme config (colors, fonts)
 ├── postcss.config.js                  ← PostCSS with tailwindcss + autoprefixer
@@ -163,7 +169,8 @@ T1 → T2 → T3, T4, T5 (parallel) → T6 → T7, T8 (parallel) → T9, T10, T1
 ## Task 1: Project Scaffolding
 
 **Files:**
-- Create: `package.json`, `tailwind.config.js`, `postcss.config.js`, `tsconfig.json`, `public/index.html`, `.env.development`, `.env.production`, `tests/setup.ts`
+- Create: `package.json`, `tailwind.config.js`, `postcss.config.js`, `tsconfig.json`, `public/index.html`, `public/manifest.json`, `.env.development`, `.env.production`, `tests/setup.ts`
+- Copy (already in repo): `public/visit-logo.svg`, `public/visit-icon.svg`, `public/visit-logo-white.png`, `public/favicon-192x192.png`
 
 - [ ] **Step 1: Scaffold the CRA + React + TS project**
 
@@ -183,6 +190,8 @@ npm install -D tailwindcss@3 postcss autoprefixer \
 ```
 
 - [ ] **Step 3: Configure tailwind.config.js and postcss.config.js**
+
+> **Values sourced from `src/tokens/brand.md` — Color Palette table.** If brand colors change, update `brand.md` first, then sync here.
 
 ```javascript
 // tailwind.config.js
@@ -234,13 +243,63 @@ import '@testing-library/jest-dom'
 
 - [ ] **Step 5: Add Google Fonts to public/index.html**
 
+> **Font families and weights sourced from `src/tokens/brand.md` — Typography section.** The consolidated Google Fonts link below combines all three font imports documented there.
+
 ```html
 <!-- public/index.html <head> -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 ```
 
-- [ ] **Step 6: Create env files**
+- [ ] **Step 6: Verify brand assets in public/**
+
+**All asset URLs are documented in `src/tokens/brand.md` — Logo section.** The files in `public/` were downloaded from those URLs. If the logo changes upstream, re-download from the URL in `brand.md`.
+
+Verify assets exist:
+
+```bash
+ls -la public/visit-logo.svg public/visit-icon.svg public/visit-logo-white.png public/favicon-192x192.png
+```
+
+| File | Usage |
+|---|---|
+| `visit-logo.svg` | Full wordmark (75x24): icon + "Visit" text. Used in kiosk header via `<img src="/visit-logo.svg">` |
+| `visit-icon.svg` | Icon-only "d+" symbol (19x24). Alternative for tight layouts |
+| `visit-logo-white.png` | White-on-transparent wordmark (~512px wide). For dark backgrounds |
+| `favicon-192x192.png` | PWA icon (192x192). Purple "d+" mark on transparent background |
+
+> **Do NOT** use placeholder or hand-drawn SVGs for the logo. These are the real production assets sourced from `brand.md`.
+
+- [ ] **Step 7: Create public/manifest.json for PWA**
+
+```json
+{
+  "short_name": "Visit Check-in",
+  "name": "Visit Health Clinic Check-in",
+  "icons": [
+    {
+      "src": "favicon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#714FFF",
+  "background_color": "#F5F3FF"
+}
+```
+
+Add to `public/index.html` `<head>`:
+
+```html
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+<link rel="icon" href="%PUBLIC_URL%/favicon-192x192.png" />
+<link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon-192x192.png" />
+<meta name="theme-color" content="#714FFF" />
+```
+
+- [ ] **Step 8: Create env files**
 
 ```bash
 # .env.development
@@ -257,17 +316,17 @@ REACT_APP_CLINIC_ID=                   # Set during kiosk provisioning
 REACT_APP_CLINIC_NAME=                 # Set during kiosk provisioning
 ```
 
-- [ ] **Step 7: Verify dev server starts**
+- [ ] **Step 9: Verify dev server starts**
 
 ```bash
 npm start
 ```
 Expected: browser opens at `http://localhost:3000`.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
-git init && git add . && git commit -m "feat: scaffold CRA+React+TS, Tailwind v3, Jest, env config"
+git init && git add . && git commit -m "feat: scaffold CRA+React+TS, Tailwind v3, Jest, env config, real Visit brand assets"
 ```
 
 ---
@@ -299,6 +358,8 @@ Colors are defined in `tailwind.config.js` instead of CSS `@theme`. This generat
 
 ```typescript
 // src/tokens/theme.ts
+// Values sourced from src/tokens/brand.md — Color Palette and Typography sections.
+// brand.md is the source of truth; this file provides JS-side access.
 // Use these only when a JS value is needed (e.g. style prop, Card accentColor).
 // For className, use Tailwind utilities: bg-brand, text-accent, etc.
 
@@ -2310,6 +2371,12 @@ git commit -m "feat: QueueTokenCard (TDD), ProgressBar, StepHeader — Tailwind 
 
 - [ ] **Step 1: Create KioskShell**
 
+> **Asset note:** The header uses the real Visit logo sourced from `getvisitapp.com`.
+> - `visit-logo.svg` — full wordmark (icon + "Visit" text), 75x24, used in header
+> - `visit-icon.svg` — icon-only mark (d+ symbol), 19x24, alternative for tight spaces
+> - Source: `https://getvisitapp.com/payload/_next/static/media/visit-logo.03c9c3d8.svg`
+> - These files are already saved in `public/`. Do NOT use placeholder/hand-drawn SVGs.
+
 ```typescript
 // src/kiosk/KioskShell.tsx
 import { ReactNode } from 'react'
@@ -2325,14 +2392,11 @@ export function KioskShell({ children, progressPercent }: KioskShellProps) {
         <span>10:30</span><span>📶 🔋</span>
       </div>
       <header className="flex items-center justify-between px-4 py-2.5 bg-bg-card border-b border-border-light">
-        <div className="flex items-center gap-1.5">
-          <div className="w-7 h-7 rounded-[7px] bg-brand flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-              <path d="M4 5l6 10 6-10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="font-['Bricolage_Grotesque'] font-bold text-[15px] text-brand">Visit</span>
-        </div>
+        <img
+          src="/visit-logo.svg"
+          alt="Visit Health"
+          className="h-5"
+        />
         <ProgressBar percent={progressPercent} />
       </header>
       <main className="flex-1 overflow-hidden relative">{children}</main>
@@ -3456,7 +3520,7 @@ git add . && git commit -m "feat: Flow A kiosk prototype complete — production
 
 ## Verification Checklist
 
-- [ ] `npm start` → iPad frame visible, Visit logo, 5-option home screen
+- [ ] `npm start` → iPad frame visible, **real Visit wordmark logo** (not a placeholder chevron), 5-option home screen
 - [ ] Pre-booked doctor → S2 Identify (mobile + QR tabs)
 - [ ] `9876543210` → Priya Sharma found → OTP screen shows beneficiary phone
 - [ ] `9123456780` → Rajan Pillai found (consult only)
@@ -3479,6 +3543,22 @@ git add . && git commit -m "feat: Flow A kiosk prototype complete — production
 - [ ] `REACT_APP_USE_REAL_API=true npm run build` → builds cleanly
 - [ ] Console shows telemetry events on each screen transition
 - [ ] No inline hex codes in `kiosk/` components (audit grep)
+- [ ] Logo in header is `<img src="/visit-logo.svg">` (real wordmark), NOT an inline placeholder SVG
+- [ ] PWA: `manifest.json` references `favicon-192x192.png` (real Visit icon mark)
+- [ ] No hand-drawn or approximated brand assets anywhere in `src/`
+
+---
+
+## Brand Asset Reference
+
+> **Source of truth:** `src/tokens/brand.md`. All URLs below are documented there.
+
+| Asset | File | Dimensions | Usage |
+|---|---|---|---|
+| Full wordmark | `public/visit-logo.svg` | 75x24 SVG | Kiosk header (`KioskShell.tsx`) |
+| Icon-only mark | `public/visit-icon.svg` | 19x24 SVG | Tight layouts, mobile |
+| White wordmark | `public/visit-logo-white.png` | ~512px wide PNG | Dark backgrounds |
+| Favicon/PWA icon | `public/favicon-192x192.png` | 192x192 PNG | PWA manifest, browser tab |
 
 ---
 
