@@ -346,6 +346,16 @@ git init && git add . && git commit -m "feat: scaffold CRA+React+TS, Tailwind v3
 @tailwind components;
 @tailwind utilities;
 
+/* PWA responsive: ensure the app fills the full screen on any device.
+   html/body/#root at 100dvh means h-full propagates through KioskShell
+   correctly in both demo-shell (IPadBezel clips to 500px) and production
+   PWA mode (fills the actual iPad screen, whatever size it is). */
+html, body, #root {
+  height: 100%;
+  height: 100dvh; /* dvh accounts for browser chrome on mobile */
+  overflow: hidden;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
@@ -2383,6 +2393,9 @@ import { ReactNode } from 'react'
 interface KioskShellProps { children: ReactNode }
 
 export function KioskShell({ children }: KioskShellProps) {
+  // h-full fills whatever parent provides:
+  //   demo mode → IPadBezel provides 500px fixed height
+  //   production PWA → html/body/#root are 100dvh, so h-full = full screen
   return (
     <div className="flex flex-col h-full bg-bg-surface">
       <div className="flex justify-between items-center px-3.5 py-1.5 text-[10px] font-semibold
@@ -2471,8 +2484,12 @@ function AppInner() {
 }
 
 export default function App() {
+  // h-full (not min-h-screen) — index.css sets html/body/#root to 100dvh,
+  // so h-full here = full screen. In PWA standalone mode IPadBezel hides itself,
+  // and KioskShell fills the screen directly. Flex centering shows the bezel in demo.
   return (
-    <div className="min-h-screen bg-[#0f0f13] flex flex-col items-center justify-center p-8">
+    <div className="h-full bg-[#0f0f13] flex flex-col items-center justify-center p-8
+                    [@media(display-mode:standalone)]:p-0 [@media(display-mode:standalone)]:bg-transparent">
       <IPadBezel>
         <AppInner />
       </IPadBezel>

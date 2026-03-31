@@ -31,7 +31,7 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
 .ipad-bezel::after{content:'';position:absolute;right:-4px;top:110px;width:4px;height:50px;background:#2c2c2e;border-radius:0 3px 3px 0}
 .ipad-top-bar{display:flex;align-items:center;justify-content:center;height:20px;margin-bottom:6px}
 .ipad-camera{width:8px;height:8px;background:#2c2c2e;border-radius:50%;border:1px solid #444}
-.ipad-screen{background:#F5F3FF;border-radius:20px;overflow:hidden;width:100%;height:520px;position:relative}
+.ipad-screen{background:#F5F3FF;border-radius:20px;overflow:hidden;width:100%;height:520px;position:relative;display:flex;flex-direction:column}
 .ipad-home-bar{display:flex;justify-content:center;padding:10px 0 4px}
 .home-bar-pill{width:100px;height:4px;background:#3a3a3c;border-radius:3px}
 
@@ -49,7 +49,7 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
 .progress-fill{height:100%;background:#714FFF;border-radius:4px;transition:width .4s ease}
 
 /* ── Screens ── */
-.screen-frame{display:none;flex-direction:column;height:100%}
+.screen-frame{display:none;flex-direction:column;flex:1}
 .screen-frame.active{display:flex}
 .flow-container{display:none}.flow-container.active{display:block}
 
@@ -193,7 +193,7 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
 .id-tab.active{background:#714FFF;color:#fff;box-shadow:0 2px 6px rgba(113,79,255,.3)}
 
 /* ── QR viewfinder ── */
-.qr-viewfinder{flex:1;background:#111;border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.qr-viewfinder{flex:1;max-height:220px;background:#111;border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
 .corner{position:absolute;width:24px;height:24px}
 .corner.tl{top:calc(50% - 65px);left:calc(50% - 65px);border-top:3px solid #714FFF;border-left:3px solid #714FFF;border-radius:4px 0 0 0}
 .corner.tr{top:calc(50% - 65px);right:calc(50% - 65px);border-top:3px solid #714FFF;border-right:3px solid #714FFF;border-radius:0 4px 0 0}
@@ -241,7 +241,7 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
       <div class="status-bar"><span>10:30</span><div class="status-icons"><span>📶</span><span>🔋</span></div></div>
       <div class="kiosk-header">
         <div class="visit-logo">
-          <img src="../../../public/visit-logo.svg" alt="Visit" style="height:24px;">
+          <img src="../public/visit-logo.svg" alt="Visit" style="height:24px;">
         </div>
       </div>
 

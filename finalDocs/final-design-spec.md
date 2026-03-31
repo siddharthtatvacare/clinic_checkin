@@ -188,6 +188,7 @@ WhatsApp confirmation nudge: "A confirmation has been sent to +91 XXXXX XXXXX" �
 | Screen transitions | Framer Motion slide (left→right advance, right→left back) |
 | Idle reset timeout | 30 seconds on S4, then return to S1 |
 | OTP resend rate limit | 1 per 2 minutes (PRD §4.1.2) |
+| PWA viewport | Full-screen adaptive — use `100dvh`/`100vw` not fixed px heights. The kiosk PWA must fill the device screen regardless of iPad model. No fixed pixel heights in production components. |
 
 ---
 
