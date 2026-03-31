@@ -40,7 +40,7 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
 .status-icons{display:flex;gap:4px;align-items:center}
 
 /* ── Kiosk header ── */
-.kiosk-header{padding:10px 16px 8px;background:#fff;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ede9ff}
+.kiosk-header{padding:10px 16px 8px;background:#fff;display:flex;align-items:center;border-bottom:1px solid #ede9ff}
 .visit-logo{display:flex;align-items:center;gap:6px}
 .logo-mark{width:26px;height:26px;background:#714FFF;border-radius:7px;display:flex;align-items:center;justify-content:center}
 .logo-mark svg{width:14px;height:14px}
@@ -187,6 +187,29 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
 .error-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px;color:#1F1E1E;margin-bottom:8px;text-align:center}
 .error-sub{font-size:12px;color:#686670;line-height:1.5;margin-bottom:20px;text-align:center}
 
+/* ── ID tabs (mobile / QR switcher) ── */
+.id-tabs{display:flex;gap:0;background:#ede9ff;border-radius:10px;padding:3px;margin-bottom:12px}
+.id-tab{flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:#714FFF;transition:all .2s}
+.id-tab.active{background:#714FFF;color:#fff;box-shadow:0 2px 6px rgba(113,79,255,.3)}
+
+/* ── QR viewfinder ── */
+.qr-viewfinder{flex:1;background:#111;border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.corner{position:absolute;width:24px;height:24px}
+.corner.tl{top:calc(50% - 65px);left:calc(50% - 65px);border-top:3px solid #714FFF;border-left:3px solid #714FFF;border-radius:4px 0 0 0}
+.corner.tr{top:calc(50% - 65px);right:calc(50% - 65px);border-top:3px solid #714FFF;border-right:3px solid #714FFF;border-radius:0 4px 0 0}
+.corner.bl{bottom:calc(50% - 65px);left:calc(50% - 65px);border-bottom:3px solid #714FFF;border-left:3px solid #714FFF;border-radius:0 0 0 4px}
+.corner.br{bottom:calc(50% - 65px);right:calc(50% - 65px);border-bottom:3px solid #714FFF;border-right:3px solid #714FFF;border-radius:0 0 4px 0}
+.scan-beam{position:absolute;left:calc(50% - 62px);width:124px;height:2px;background:linear-gradient(90deg,transparent,#714FFF,#FF9273,#714FFF,transparent);border-radius:2px;animation:scanBeam 2s ease-in-out infinite;box-shadow:0 0 8px rgba(113,79,255,.6)}
+@keyframes scanBeam{0%{top:calc(50% - 62px);opacity:0}10%{opacity:1}90%{opacity:1}100%{top:calc(50% + 62px);opacity:0}}
+.fake-qr{width:80px;height:80px;opacity:.3}
+.qr-camera-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;color:#888;font-family:'Inter',sans-serif}
+.qr-instruction{background:#fff;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;box-shadow:0 2px 8px rgba(113,79,255,.06)}
+.qr-instruction .icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.qr-instruction .text strong{font-size:12px;font-weight:600;color:#1F1E1E;display:block;margin-bottom:2px}
+.qr-instruction .text span{font-size:11px;color:#686670;line-height:1.4}
+.switch-to-phone{text-align:center;font-size:11px;color:#714FFF;font-weight:600;cursor:pointer;padding:8px 0}
+.switch-to-phone:hover{text-decoration:underline}
+
 /* ── Info panel ── */
 .info-panel{margin-top:16px;width:390px;background:#1a1a1f;border-radius:16px;padding:14px 18px;border:1px solid #2a2a30}
 .info-step-name{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;color:#fff;margin-bottom:4px}
@@ -218,10 +241,8 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
       <div class="status-bar"><span>10:30</span><div class="status-icons"><span>📶</span><span>🔋</span></div></div>
       <div class="kiosk-header">
         <div class="visit-logo">
-          <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M4 5l6 10 6-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <span class="logo-text">Visit</span>
+          <img src="../../../public/visit-logo.svg" alt="Visit" style="height:24px;">
         </div>
-        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
       </div>
 
       <!-- ═══════════════════════════════════
@@ -262,13 +283,47 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
       <div class="screen-frame" data-flow="a" data-screen="a-s2qr">
         <div class="scr-body">
           <div class="scr-title" style="font-size:17px">Scan your QR code</div>
-          <div class="scr-sub">Hold your phone screen up to the camera</div>
-          <div style="flex:1;background:#111;border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden">
-            <div style="position:absolute;width:120px;height:120px;border:3px solid #714FFF;border-radius:8px;opacity:.5"></div>
-            <div style="font-size:48px;opacity:.25">📱</div>
-            <div style="position:absolute;bottom:10px;font-size:10px;color:#888">Camera active — align QR within frame</div>
+          <div class="scr-sub">Hold your phone screen up to the camera below</div>
+          <div class="id-tabs" style="margin-bottom:10px">
+            <div class="id-tab" onclick="go('a','a-s2')">📱 Mobile Number</div>
+            <div class="id-tab active">🔲 Scan QR Code</div>
           </div>
-          <div style="text-align:center;font-size:11px;color:#714FFF;font-weight:600;cursor:pointer;padding:8px" onclick="go('a','a-s2')">Use mobile number instead →</div>
+          <div class="qr-viewfinder">
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner bl"></div>
+            <div class="corner br"></div>
+            <svg class="fake-qr" viewBox="0 0 100 100" fill="none">
+              <rect x="10" y="10" width="30" height="30" rx="4" stroke="#714FFF" stroke-width="4"/>
+              <rect x="18" y="18" width="14" height="14" rx="2" fill="#714FFF" opacity="0.5"/>
+              <rect x="60" y="10" width="30" height="30" rx="4" stroke="#714FFF" stroke-width="4"/>
+              <rect x="68" y="18" width="14" height="14" rx="2" fill="#714FFF" opacity="0.5"/>
+              <rect x="10" y="60" width="30" height="30" rx="4" stroke="#714FFF" stroke-width="4"/>
+              <rect x="18" y="68" width="14" height="14" rx="2" fill="#714FFF" opacity="0.5"/>
+              <rect x="48" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="58" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="68" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="78" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="48" y="58" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="68" y="58" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="48" y="68" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="58" y="68" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="78" y="68" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="48" y="78" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="68" y="78" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+            </svg>
+            <div class="scan-beam"></div>
+            <div class="qr-camera-hint">Camera active — align QR code within the frame</div>
+          </div>
+          <div class="qr-instruction">
+            <div class="icon">📱</div>
+            <div class="text">
+              <strong>Open your Visit app</strong>
+              <span>Go to My Appointments → tap your booking → show the QR code here</span>
+            </div>
+          </div>
+          <div class="switch-to-phone" onclick="go('a','a-s2')">Use mobile number instead →</div>
+          <div style="position:absolute;bottom:60px;right:20px;opacity:0;cursor:pointer" onclick="go('a','a-s3')">[simulate scan ✓]</div>
         </div>
       </div>
 
@@ -293,11 +348,12 @@ body{background:#0f0f13;min-height:100vh;display:flex;flex-direction:column;alig
       <!-- A-S3 Appointments -->
       <div class="screen-frame" data-flow="a" data-screen="a-s3">
         <div class="scr-body">
+          <div class="back-row" onclick="go('a','a-s2')">‹ Back</div>
           <div class="scr-title" style="font-size:16px">Welcome back, Priya!</div>
           <div class="scr-sub">Here are your appointments for today</div>
           <div class="scr-label">Today's Schedule</div>
-          <div class="appt-card"><div><span class="appt-type-badge badge-consult">Consultation</span></div><div class="appt-detail-main">Dr. Anjali Mehta — General Physician</div><div class="appt-detail-sub"><span>🕐 10:45 AM</span><span>🚪 Cabin 3</span></div></div>
-          <div class="appt-card lab"><div><span class="appt-type-badge badge-lab">Lab Test</span></div><div class="appt-detail-main">Complete Blood Count (CBC)</div><div class="appt-detail-sub"><span>🕐 11:30 AM</span><span>🧪 Lab, Ground Floor</span></div></div>
+          <div class="appt-card"><div><span class="appt-type-badge badge-consult">Consultation</span></div><div class="appt-detail-main">Dr. Anjali Mehta — General Physician</div><div class="appt-detail-sub"><span>🕐 10:45 AM</span></div></div>
+          <div class="appt-card lab"><div><span class="appt-type-badge badge-lab">Lab Test</span></div><div class="appt-detail-main">Complete Blood Count (CBC)</div><div class="appt-detail-sub"><span>🕐 11:30 AM</span></div></div>
           <button class="btn-primary" onclick="go('a','a-s4')">Check In Now →</button>
         </div>
       </div>
@@ -945,7 +1001,6 @@ function go(flow, screenId) {
 
   const scr = flowData[flow].screens.find(s => s.id === screenId);
   if(scr) {
-    document.getElementById('progress-fill').style.width = scr.p + '%';
     document.getElementById('info-name').textContent = scr.name;
     document.getElementById('info-desc').textContent = scr.desc;
     document.getElementById('info-apis').innerHTML = scr.apis.map(a => `<span class="info-api">${a}</span>`).join('');

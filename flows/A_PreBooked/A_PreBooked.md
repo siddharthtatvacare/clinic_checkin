@@ -44,8 +44,9 @@ Visit logo is present here https://getvisitapp.com/payload/_next/static/media/vi
 
 ### S3: [List of appointments/orders]
 - What the user sees:
-    a. Welcome {name}, where {name} is the full name of the patient fetched by calling the API.
-    b. The list of the appointments/orders (Dr appointments/ Lab - show relevant icons and details of the order) for today against this patient with the CTA for check- in. Note that the checkin is not at order level but overall into the clinic. 
+    a. A "← Back" button (top-left). Tapping it returns the patient to S2 Mobile Number entry — not to OTP. The patient restarts identification from scratch (e.g. if someone else's number was accidentally entered).
+    b. Welcome {name}, where {name} is the full name of the patient fetched by calling the API.
+    c. The list of the appointments/orders (Dr appointments/ Lab - show relevant icons, appointment type, doctor/test name, and time) for today against this patient with the CTA for check-in. Do not show location (cabin/floor) on this screen — location is communicated on S4 after check-in. Note that the check-in is not at order level but overall into the clinic.
 - What action the user takes:
     Clicks on Check-in
 

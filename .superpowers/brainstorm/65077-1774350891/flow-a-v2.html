@@ -384,15 +384,7 @@
       <!-- Header: logo + progress bar (no step label) -->
       <div class="kiosk-header">
         <div class="visit-logo">
-          <div class="logo-mark">
-            <svg viewBox="0 0 20 20" fill="none">
-              <path d="M4 5l6 10 6-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="logo-text">Visit</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="progress-fill" style="width:20%"></div>
+          <img src="../../../public/visit-logo.svg" alt="Visit" style="height:24px;">
         </div>
       </div>
 
@@ -554,21 +546,21 @@
       <!-- ════════ S3: Appointments ════════ -->
       <div class="screen-frame" id="screen-s3">
         <div class="s3-body">
+          <div class="back-row" onclick="goTo('s2')">‹ Back</div>
           <div class="welcome-line">Welcome back, Priya! 👋</div>
           <div class="welcome-sub">Here are your appointments for today</div>
           <div class="appt-label">Today's Schedule</div>
           <div class="appt-card">
             <div class="appt-type-row"><span class="appt-type-badge badge-consult">Consultation</span></div>
             <div class="appt-detail-main">Dr. Anjali Mehta — General Physician</div>
-            <div class="appt-detail-sub"><span>🕐 10:45 AM</span><span>🚪 Cabin 3, Floor 1</span></div>
+            <div class="appt-detail-sub"><span>🕐 10:45 AM</span></div>
           </div>
           <div class="appt-card lab">
             <div class="appt-type-row"><span class="appt-type-badge badge-lab">Lab Test</span></div>
             <div class="appt-detail-main">Complete Blood Count (CBC)</div>
-            <div class="appt-detail-sub"><span>🕐 11:30 AM</span><span>🧪 Lab, Ground Floor</span></div>
+            <div class="appt-detail-sub"><span>🕐 11:30 AM</span></div>
           </div>
           <button class="checkin-btn" onclick="goTo('s4')">Check In Now →</button>
-          <div class="not-me">This isn't me</div>
         </div>
       </div>
 
@@ -639,8 +631,7 @@ function goTo(id) {
 
   const s = screens[id];
   document.getElementById(s.el).classList.add('active');
-  document.getElementById('progress-fill').style.width = s.p + '%';
-  document.getElementById('info-name').textContent = s.name;
+document.getElementById('info-name').textContent = s.name;
   document.getElementById('info-desc').textContent = s.desc;
   document.getElementById('info-decisions').innerHTML = s.decisions.map(d=>`<div class="info-decision">${d}</div>`).join('');
 

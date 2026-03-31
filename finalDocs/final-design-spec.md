@@ -1,7 +1,7 @@
 # Flow A — Pre-Booked Patient: Design Spec
 > Date: 2026-03-24
 > Status: Approved (visual prototype reviewed and signed off)
-> Prototype: `.superpowers/brainstorm/65077-1774350891/flow-a-v2.html`
+> Prototype: `finalDocs/all-flows-ipad.html`
 > PRD reference: `01-prd-check-in.md` §4.1
 
 ---
@@ -46,7 +46,7 @@ S2 Identify
 S3 Appointment List
   ├── Multiple patients on one number → disambiguation: "Which appointment?" → S3 filtered
   ├── "Check In Now" → S4 Queue Token (per appointment type: consult or lab)
-  └── "This isn't me" → back to S2
+  └── "← Back" (top-left) → S2 Mobile Number entry (not OTP)
 
 S4 Queue Token → auto-reset to S1 after 30s idle timeout
 
@@ -76,7 +76,7 @@ Per PRD §4.0.1, the kiosk home screen has **exactly 5 types of users** and **th
 
 Language toggle (English / Hindi) shown in header — language switching deferred to later phase.
 
-Visit logo top-left. Purple progress bar top-right. No step count label.
+Visit logo top-left (`/public/visit-logo.svg`). No progress bar. No step count label.
 
 ### S2 — Identify: Mobile Number
 
@@ -91,10 +91,14 @@ Visit logo top-left. Purple progress bar top-right. No step count label.
 
 ### S2 — Identify: QR Scan
 
-- Same tab control, QR tab active
-- Dark camera viewfinder with animated purple scan beam and corner bracket guides
-- Instruction: "Open Visit app → My Appointments → show QR here"
-- "Use mobile number instead →" link
+- Same tab control as mobile screen, QR tab active
+- Dark camera viewfinder containing:
+  - Four **purple corner bracket** guides marking the scan target area
+  - Animated **scan beam**: purple → coral → purple gradient, 2-second loop, travels top-to-bottom through the frame
+  - A faint **QR code pattern** (SVG, 30% opacity) inside the brackets — shows patients where to position their phone
+  - Hint text at bottom of viewfinder: "Camera active — align QR code within the frame"
+- Instruction card below viewfinder: "Open your Visit app → My Appointments → tap your booking → show the QR code here"
+- "Use mobile number instead →" link below the instruction card
 - On valid QR: skip OTP, advance directly to S3
 - On invalid/unrecognised QR: show inline error "QR not recognised — try again or use mobile number"
 - No auto-timeout on the QR screen (patient can take their time)
@@ -119,11 +123,11 @@ Visit logo top-left. Purple progress bar top-right. No step count label.
 - Heading: "Welcome, {full name}!" (full name from API, per PRD/A_PreBooked.md)
 - Sub: "Here are your appointments for today"
 - Each appointment card shows:
-  - **Consultation:** doctor name, specialty, time, cabin
-  - **Lab test:** test name(s), time, location, prep reminder if fasting required
+  - **Consultation:** doctor name, specialty, time (no location shown at this step)
+  - **Lab test:** test name(s), time (no location shown at this step; prep reminder if fasting required)
   - Cards colour-coded: purple left-border = consult, coral = lab
+- "← Back" button (top-left) → returns to S2 Mobile Number entry (not OTP — patient restarts identification from scratch)
 - Single "Check In Now →" CTA — check-in is **global** (all appointments at once)
-- "This isn't me" text link → returns to S2
 
 **Late arrival handling (per PRD §4.1.2):**
 - Early (>30 min before slot): allowed, show "You're a bit early — your appointment is at {time}. You're checked in."
@@ -172,7 +176,7 @@ WhatsApp confirmation nudge: "A confirmation has been sent to +91 XXXXX XXXXX" �
 | Element | Spec |
 |---|---|
 | Tap target min | 60px height on all interactive elements |
-| Progress indicator | Purple fill bar in header — **no step count text** |
+| Progress indicator | **Removed** — no progress bar in header |
 | Font — headings | Bricolage Grotesque 700 |
 | Font — card titles | Montserrat 600 |
 | Font — body/labels | Inter 400/500 |

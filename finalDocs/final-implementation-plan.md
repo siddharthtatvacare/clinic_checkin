@@ -82,7 +82,7 @@ checkin_proto/
     │
     └── kiosk/                          ← THE REAL PRODUCT
         ├── KioskApp.tsx                ← S1 lives here; routes to flows
-        ├── KioskShell.tsx              ← Logo + progress bar wrapper
+        ├── KioskShell.tsx              ← Logo wrapper (header, no progress bar)
         ├── S1_Welcome.tsx              ← Shared 5-option home screen
         │
         ├── session/                    ← PILLAR 1: Session & Idle
@@ -1568,7 +1568,7 @@ export interface KioskAPI {
 ```typescript
 // src/kiosk/services/api.mock.ts
 // Mock returns pre-assembled frontend types directly — no transformers needed.
-// Cabin data is returned fully populated so S3 can show the complete card in demo.
+// Cabin data in mock tokens is for S4 routing display — S3 cards show time only.
 
 import type { KioskAPI } from './api'
 import type { VerifyPhoneResult, QRScanResult, CheckInResult, CabinDetailMap } from '../../types'
@@ -1916,10 +1916,9 @@ import { useSession } from '../session/SessionProvider'
 interface FlowShellProps {
   children: ReactNode
   stepKey: string
-  progressPercent: number
 }
 
-export function FlowShell({ children, stepKey, progressPercent }: FlowShellProps) {
+export function FlowShell({ children, stepKey }: FlowShellProps) {
   const { setCurrentScreen } = useSession()
 
   useEffect(() => {
@@ -1927,7 +1926,7 @@ export function FlowShell({ children, stepKey, progressPercent }: FlowShellProps
   }, [stepKey, setCurrentScreen])
 
   return (
-    <KioskShell progressPercent={progressPercent}>
+    <KioskShell>
       <AnimatePresence mode="wait">
         <motion.div
           key={stepKey}
@@ -2380,24 +2379,22 @@ git commit -m "feat: QueueTokenCard (TDD), ProgressBar, StepHeader — Tailwind 
 ```typescript
 // src/kiosk/KioskShell.tsx
 import { ReactNode } from 'react'
-import { ProgressBar } from './components/ProgressBar'
 
-interface KioskShellProps { children: ReactNode; progressPercent: number }
+interface KioskShellProps { children: ReactNode }
 
-export function KioskShell({ children, progressPercent }: KioskShellProps) {
+export function KioskShell({ children }: KioskShellProps) {
   return (
     <div className="flex flex-col h-full bg-bg-surface">
       <div className="flex justify-between items-center px-3.5 py-1.5 text-[10px] font-semibold
                       text-text-primary bg-bg-surface">
         <span>10:30</span><span>📶 🔋</span>
       </div>
-      <header className="flex items-center justify-between px-4 py-2.5 bg-bg-card border-b border-border-light">
+      <header className="flex items-center px-4 py-2.5 bg-bg-card border-b border-border-light">
         <img
           src="/visit-logo.svg"
           alt="Visit Health"
           className="h-5"
         />
-        <ProgressBar percent={progressPercent} />
       </header>
       <main className="flex-1 overflow-hidden relative">{children}</main>
     </div>
@@ -2547,7 +2544,7 @@ const inactiveOptions = [
 
 export function S1_Welcome({ onSelect }: Props) {
   return (
-    <KioskShell progressPercent={10}>
+    <KioskShell>
       <PageLayout>
         <h1 className="font-['Bricolage_Grotesque'] font-bold text-xl text-text-primary leading-tight mb-1">
           Welcome to<br />Visit Health Clinic
@@ -2867,23 +2864,55 @@ export function S2_Identify({ state, dispatch }: Props) {
         </>
       ) : (
         <div className="flex-1 flex flex-col">
+          {/* Viewfinder — dark camera area with corner brackets, scan beam, and faint QR guide */}
           <div className="flex-1 bg-[#111] rounded-[16px] relative overflow-hidden flex items-center justify-center mb-3">
-            <div className="text-center">
-              <p className="text-xs text-[#666] mb-3">Camera active — align QR code within frame</p>
-              <button
-                onClick={handleSimulateQR}
-                disabled={qrCall.state.loading}
-                className="px-4 py-2 bg-brand text-white text-xs font-semibold rounded-[8px]"
-              >
-                {qrCall.state.loading ? 'Scanning...' : 'Simulate QR Scan ✓'}
+            {/* Four purple corner bracket guides */}
+            <div className="absolute w-6 h-6" style={{ top:'calc(50% - 65px)', left:'calc(50% - 65px)', borderTop:'3px solid #714FFF', borderLeft:'3px solid #714FFF', borderRadius:'4px 0 0 0' }} />
+            <div className="absolute w-6 h-6" style={{ top:'calc(50% - 65px)', right:'calc(50% - 65px)', borderTop:'3px solid #714FFF', borderRight:'3px solid #714FFF', borderRadius:'0 4px 0 0' }} />
+            <div className="absolute w-6 h-6" style={{ bottom:'calc(50% - 65px)', left:'calc(50% - 65px)', borderBottom:'3px solid #714FFF', borderLeft:'3px solid #714FFF', borderRadius:'0 0 0 4px' }} />
+            <div className="absolute w-6 h-6" style={{ bottom:'calc(50% - 65px)', right:'calc(50% - 65px)', borderBottom:'3px solid #714FFF', borderRight:'3px solid #714FFF', borderRadius:'0 0 4px 0' }} />
+            {/* Faint QR pattern — visual guide at 30% opacity showing scan target */}
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="none" style={{ opacity: 0.3 }}>
+              <rect x="10" y="10" width="30" height="30" rx="4" stroke="#714FFF" strokeWidth="4"/>
+              <rect x="18" y="18" width="14" height="14" rx="2" fill="#714FFF" opacity="0.5"/>
+              <rect x="60" y="10" width="30" height="30" rx="4" stroke="#714FFF" strokeWidth="4"/>
+              <rect x="68" y="18" width="14" height="14" rx="2" fill="#714FFF" opacity="0.5"/>
+              <rect x="10" y="60" width="30" height="30" rx="4" stroke="#714FFF" strokeWidth="4"/>
+              <rect x="18" y="68" width="14" height="14" rx="2" fill="#714FFF" opacity="0.5"/>
+              <rect x="48" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="58" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="68" y="48" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="48" y="58" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+              <rect x="68" y="58" width="6" height="6" fill="#714FFF" opacity="0.4"/>
+            </svg>
+            {/* Scan beam — purple→coral→purple gradient, 2s loop. Requires tailwind.config.js:
+                extend.animation: { scanBeam: 'scanBeam 2s ease-in-out infinite' }
+                extend.keyframes:  { scanBeam: { '0%': { top:'calc(50% - 62px)', opacity:'0' },
+                                                  '10%,90%': { opacity:'1' },
+                                                  '100%': { top:'calc(50% + 62px)', opacity:'0' } } } */}
+            <div className="absolute h-[2px] animate-scanBeam"
+              style={{ width:124, left:'calc(50% - 62px)',
+                background:'linear-gradient(90deg,transparent,#714FFF,#FF9273,#714FFF,transparent)',
+                boxShadow:'0 0 8px rgba(113,79,255,0.6)' }} />
+            <p className="absolute bottom-3 left-0 right-0 text-center text-[10px] text-[#888]">
+              Camera active — align QR code within the frame
+            </p>
+            {/* Dev-only simulate tap — invisible in production */}
+            {process.env.NODE_ENV !== 'production' && (
+              <button onClick={handleSimulateQR} disabled={qrCall.state.loading}
+                className="absolute bottom-8 right-3 opacity-0 hover:opacity-100 text-[9px] text-[#666] px-2 py-1 bg-[#1a1a1a] rounded">
+                {qrCall.state.loading ? '...' : '[scan ✓]'}
               </button>
-            </div>
+            )}
           </div>
-          <div className="bg-bg-card rounded-[12px] p-3 flex gap-2.5 items-start mb-2">
-            <span className="text-lg">📱</span>
+          {/* Instruction card */}
+          <div className="bg-bg-card rounded-[12px] p-3 flex gap-2.5 items-start mb-2 shadow-sm">
+            <span className="text-lg mt-0.5">📱</span>
             <div>
-              <p className="text-xs font-semibold text-text-primary">Open your Visit app</p>
-              <p className="text-[11px] text-text-secondary">Go to My Appointments → show QR code here</p>
+              <p className="text-xs font-semibold text-text-primary mb-0.5">Open your Visit app</p>
+              <p className="text-[11px] text-text-secondary leading-snug">
+                Go to My Appointments → tap your booking → show the QR code here
+              </p>
             </div>
           </div>
           <button onClick={() => setTab('mobile')} className="text-center text-[11px] text-brand font-semibold py-2">
@@ -2989,17 +3018,14 @@ export function S2b_OTPVerify({ state, dispatch }: Props) {
 
 - [ ] **Step 3: S3_AppointmentList.tsx**
 
-> **Two-phase loading pattern:**
-> - Phase 1 (immediate): Appointment cards render as soon as `state.patient` is set. Doctor name, time, test names are all from Visit's GetPatientOrders (already in state). No spinner on the main content.
-> - Phase 2 (async, non-blocking): On mount, `getAppointmentCabinDetails` fires to TP. Cabin fields show an animated skeleton while loading. If TP is down, they fall back to "See receptionist". "Check In Now" is **always enabled** once Phase 1 is ready — cabin info is wayfinding, not a check-in gate.
+> **Loading pattern:**
+> - Appointments render immediately from `state.patient` (already in state from verify/OTP flow). Doctor name, time, and test names come from Visit's GetPatientOrders. Cards show **time only — no location**.
+> - Location (cabin/floor/routing) is surfaced on S4 after check-in, sourced from the `checkIn()` API response tokens. It is not shown on S3 cards.
 
 ```typescript
 // src/kiosk/flows/A_PreBooked/steps/S3_AppointmentList.tsx
-import { useEffect, useState } from 'react'
-import type {
-  FlowAState, FlowAAction, CheckInResult,
-  AppointmentWithDetails, CabinDetailMap
-} from '../../../../types'
+import { useState } from 'react'
+import type { FlowAState, FlowAAction, CheckInResult, Appointment } from '../../../../types'
 import { Card } from '../../../components/Card'
 import { Badge } from '../../../components/Badge'
 import { Button } from '../../../components/Button'
@@ -3013,30 +3039,10 @@ interface Props { state: FlowAState; dispatch: React.Dispatch<FlowAAction> }
 export function S3_AppointmentList({ state, dispatch }: Props) {
   const [labUnavailable, setLabUnavailable] = useState(false)
 
-  // Phase 1: Appointments already in state from verifyPhone/OTP flow.
-  // Initialise each with cabinDataStatus:'loading' — TP call fires on mount below.
-  const [appointments, setAppointments] = useState<AppointmentWithDetails[]>(() =>
-    state.patient!.appointments.map(a => ({ ...a, cabinDataStatus: 'loading' as const }))
-  )
-
+  // Appointments already in state from verifyPhone/OTP flow — render immediately.
+  const appointments: Appointment[] = state.patient!.appointments
   const checkInCall = useApiCall<CheckInResult>()
-  const cabinCall   = useApiCall<CabinDetailMap>()
   const patient     = state.patient!
-
-  // Phase 2: Fetch cabin details from TP in parallel — fires once, non-blocking.
-  // "Check In Now" does NOT wait for this. Cabin info is wayfinding only.
-  useEffect(() => {
-    const apptIds = patient.appointments.map(a => a.id)
-    cabinCall.execute(() => api.getAppointmentCabinDetails(apptIds)).then(cabinMap => {
-      setAppointments(prev => prev.map(a => {
-        if (!cabinMap) return { ...a, cabinDataStatus: 'unavailable' as const }
-        const details = cabinMap[a.id]
-        return details
-          ? { ...a, ...details, cabinDataStatus: 'loaded' as const }
-          : { ...a, cabinDataStatus: 'unavailable' as const }
-      }))
-    })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCheckIn = async () => {
     const appointmentIds = patient.appointments.map(a => a.id)
@@ -3053,6 +3059,12 @@ export function S3_AppointmentList({ state, dispatch }: Props) {
 
   return (
     <PageLayout>
+      {/* Back navigates to S2 Mobile Number entry — not OTP */}
+      <button onClick={() => dispatch({ type: 'GO_TO_IDENTIFY' })}
+        className="flex items-center gap-1.5 text-[12px] text-brand font-medium mb-4">
+        ‹ Back
+      </button>
+
       <p className="font-['Bricolage_Grotesque'] font-bold text-base text-text-primary mb-0.5">
         Welcome, {patient.fullName}! 👋
       </p>
@@ -3069,27 +3081,12 @@ export function S3_AppointmentList({ state, dispatch }: Props) {
           <p className="font-['Montserrat'] font-semibold text-[13px] text-text-primary mb-1">
             {appt.type === 'consultation' ? `${appt.doctorName} — ${appt.specialty}` : appt.testNames?.join(', ')}
           </p>
+          {/* Time only — location is shown on S4 after check-in */}
           <div className="flex gap-2.5 text-[11px] text-text-secondary">
             <span>🕐 {appt.time}</span>
-            {/* Cabin field — Phase 2 data from TP. Shows skeleton while loading. */}
-            <span className="flex items-center gap-1">
-              📍 {
-                appt.cabinDataStatus === 'loading'
-                  ? <span className="inline-block w-20 h-3 bg-border-light rounded animate-pulse align-middle" />
-                  : appt.cabinDataStatus === 'unavailable'
-                  ? 'See receptionist'
-                  : `${appt.cabin}${appt.floor ? `, ${appt.floor}` : ''}`
-              }
-            </span>
           </div>
           {appt.prepNote && (
             <p className="text-[10px] text-accent font-semibold mt-1.5">⚠ {appt.prepNote}</p>
-          )}
-          {/* Routing instruction — only shown once TP data has loaded */}
-          {appt.cabinDataStatus === 'loaded' && appt.waitingAreaInstructions && (
-            <p className="text-[10px] text-text-secondary mt-1.5 leading-snug">
-              {appt.waitingAreaInstructions}
-            </p>
           )}
         </Card>
       ))}
@@ -3106,15 +3103,10 @@ export function S3_AppointmentList({ state, dispatch }: Props) {
         </div>
       )}
 
-      {/* Check In Now is ALWAYS enabled once appointments load — cabin data does NOT gate it */}
       <Button variant="primary" fullWidth onClick={handleCheckIn} className="mt-2"
         disabled={checkInCall.state.loading || labUnavailable}>
         {checkInCall.state.loading ? 'Checking in...' : 'Check In Now →'}
       </Button>
-      <button onClick={() => dispatch({ type: 'RESET' })}
-        className="text-center text-[11px] text-text-secondary underline mt-2 py-1">
-        This isn't me
-      </button>
     </PageLayout>
   )
 }
@@ -3533,7 +3525,7 @@ git add . && git commit -m "feat: Flow A kiosk prototype complete — production
 - [ ] S4 auto-resets via session manager after 30s idle
 - [ ] "Still there?" overlay appears 15s before reset on S2/S3 (120s idle)
 - [ ] No "Still there?" on S1 Welcome (no timeout)
-- [ ] "This isn't me" → full reset to home
+- [ ] "← Back" on S3 → returns to S2 Mobile Number entry (not OTP; dispatches `GO_TO_IDENTIFY`)
 - [ ] Tabs B–E show "Coming Soon" placeholder
 - [ ] Info panel updates per step
 - [ ] OTP resend countdown works (2 min cooldown, live countdown)
