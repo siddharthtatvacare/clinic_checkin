@@ -49,7 +49,9 @@ Visit logo is present here https://getvisitapp.com/payload/_next/static/media/vi
 ### S4: [Queueing and Checkin]
 - What the user sees:
  A message telling the user that you have successfully checked in and display the token number of the user. Also communicate to the user that you have received a whatsapp message with the token number and the link to track your queue. 
- Also communicate where the patient must head to avail the service. For eg if there is a consultation appointment and the doctor sits in cabin A, tell the user that head to the waiting area and finish the vitals collection and that your consultation will happen in Cabin A. 
+ 
+  Also communicate to the patient that they will receive whatsapp update with a linkg to track their journey and also updates in the app which helps guide them through their journey within the clinic.
+
 
  - What the system does in the background:
  Call the queueing service which checks-in the user into the clinic and generates the token for the user and also basis the intelligence of the queueing system tells the user where to head for availing the service.
